@@ -1,15 +1,30 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useTheme } from "next-themes"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { BookOpen, User, GraduationCap, Github, Linkedin, BarChart, Edit, LogOut } from "lucide-react"
-import { useAuth } from "@/components/auth-provider"
+import type React from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  BookOpen,
+  User,
+  GraduationCap,
+  Github,
+  Linkedin,
+  BarChart,
+  Edit,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
 import {
   Dialog,
   DialogContent,
@@ -18,69 +33,95 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useRouter } from "next/navigation"
-import { ThemeToggleEnhanced } from "@/components/theme-toggle-enhanced"
-import { userService } from "@/services/user.service"
-import type { UserProfile, EditUserForm } from "@/types/user"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+import { ThemeToggleEnhanced } from "@/components/theme-toggle-enhanced";
+import { userService } from "@/services/user.service";
+import type { UserProfile, EditUserForm } from "@/types/user";
 
 export default function ProfilePage() {
-  const { theme } = useTheme()
-  const { user, token, logout } = useAuth()
-  const router = useRouter()
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { theme } = useTheme();
+  const { user, token, logout } = useAuth();
+  const router = useRouter();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
   const [editForm, setEditForm] = useState<EditUserForm>({
     phone: "",
     bio: "",
     github_username: "",
     leetcode_username: "",
-  })
-  const [isEditing, setIsEditing] = useState(false)
+  });
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (!token || !user) {
-      router.push("/login")
-      return
-    }
-
     const fetchProfile = async () => {
       try {
-        const userProfile = await userService.getUserProfile(user.id, token)
+        // Simulate loading time
+        await new Promise((resolve) => setTimeout(resolve, 1200));
 
-        if (userProfile) {
-          setProfile(userProfile)
-          setEditForm({
-            phone: userProfile.phone?.String || "",
-            bio: userProfile.bio?.String || "",
-            github_username: userProfile.github_username?.String || "",
-            leetcode_username: userProfile.leetcode_username?.String || "",
-          })
-        }
+        const dummyProfile: UserProfile = {
+          id: 1,
+          username: "alex_dev2024",
+          name: { String: "Alexandra Johnson", Valid: true },
+          email: "alexandra.johnson@university.edu",
+          phone: { String: "+1 (555) 123-4567", Valid: true },
+          college_name: { String: "Stanford University", Valid: true },
+          year_of_study: { Int32: 3, Valid: true },
+          degree: { String: "Bachelor of Science", Valid: true },
+          branch: { String: "Computer Science & Engineering", Valid: true },
+          github_username: { String: "alexandra-dev", Valid: true },
+          leetcode_username: { String: "alex_codes", Valid: true },
+          linkedin_username: { String: "alexandra-johnson-dev", Valid: true },
+          resume_link: {
+            String: "https://drive.google.com/file/d/1234567890/view",
+            Valid: true,
+          },
+          profile_picture: {
+            String:
+              "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D",
+            Valid: true,
+          },
+          bio: {
+            String:
+              "Passionate full-stack developer with expertise in React, Node.js, and Python. Currently pursuing CS degree at Stanford with a focus on AI/ML. Love solving complex problems and building innovative solutions. Active contributor to open-source projects and competitive programming enthusiast.\n\nInterested in software engineering internships for Summer 2024.",
+            Valid: true,
+          },
+          is_verified: true,
+        };
+
+        setProfile(dummyProfile);
+        setEditForm({
+          phone: dummyProfile.phone.String,
+          bio: dummyProfile.bio.String,
+          github_username: dummyProfile.github_username.String,
+          leetcode_username: dummyProfile.leetcode_username.String,
+        });
       } catch (error) {
-        console.error("Error fetching profile:", error)
+        console.error("Error loading dummy profile:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [token, user, router])
+    fetchProfile();
+  }, [token, user, router]);
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setEditForm((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!profile || !token || !user) return
+    if (!profile || !token || !user) return;
 
     try {
       const updatedProfile = await userService.updateUserProfile(
@@ -89,51 +130,42 @@ export default function ProfilePage() {
           phone: { String: editForm.phone, Valid: true },
           bio: { String: editForm.bio, Valid: true },
           github_username: { String: editForm.github_username, Valid: true },
-          leetcode_username: { String: editForm.leetcode_username, Valid: true },
+          leetcode_username: {
+            String: editForm.leetcode_username,
+            Valid: true,
+          },
         },
-        token,
-      )
+        token
+      );
 
       if (updatedProfile) {
-        setProfile(updatedProfile)
-        setIsEditing(false)
+        setProfile(updatedProfile);
+        setIsEditing(false);
       }
     } catch (error) {
-      console.error("Error updating profile:", error)
+      console.error("Error updating profile:", error);
     }
-  }
+  };
 
   const getInitials = (name: string) => {
     return name
       .split(" ")
       .map((part) => part[0])
       .join("")
-      .toUpperCase()
-  }
+      .toUpperCase();
+  };
 
   const getGithubTheme = () => {
-    return theme === "dark" ? "dark" : "default"
-  }
+    return theme === "dark" ? "dark" : "default";
+  };
 
   const getLeetcodeTheme = () => {
-    return theme === "dark" ? "dark" : "light"
-  }
+    return theme === "dark" ? "dark" : "light";
+  };
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-              <BookOpen className="h-6 w-6" />
-              <span>PlacementBuddy</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <ThemeToggleEnhanced />
-            </div>
-          </div>
-        </header>
-
+      <div className="flex min-h-screen flex-col max-w-screen-xl mx-auto">
         <main className="flex-1 container py-8">
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-4">
@@ -159,30 +191,11 @@ export default function ProfilePage() {
           </div>
         </main>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <BookOpen className="h-6 w-6" />
-            <span>PlacementBuddy</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/notes">
-              <Button variant="ghost">My Notes</Button>
-            </Link>
-            <ThemeToggleEnhanced />
-            <Button variant="ghost" size="icon" onClick={logout}>
-              <LogOut className="h-5 w-5" />
-              <span className="sr-only">Logout</span>
-            </Button>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex min-h-screen flex-col max-w-screen-xl mx-auto">
       <main className="flex-1 container py-8">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -192,23 +205,33 @@ export default function ProfilePage() {
                 alt={profile?.name?.String || profile?.username}
               />
               <AvatarFallback>
-                {profile?.name?.String ? getInitials(profile.name.String) : profile?.username.charAt(0).toUpperCase()}
+                {profile?.name?.String
+                  ? getInitials(profile.name.String)
+                  : profile?.username.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h1 className="text-2xl font-bold">{profile?.name?.String || profile?.username}</h1>
+              <h1 className="text-2xl font-bold">
+                {profile?.name?.String || profile?.username}
+              </h1>
               <p className="text-muted-foreground">{profile?.email}</p>
-              {profile?.is_verified && (
-                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+              {/* {profile?.is_verified && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-500/10 text-green-500 border-green-500/20"
+                >
                   Verified
                 </Badge>
-              )}
+              )} */}
             </div>
 
             <div className="sm:ml-auto">
               <Dialog open={isEditing} onOpenChange={setIsEditing}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2 btn-hover-effect animate-fade-in">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 btn-hover-effect animate-fade-in"
+                  >
                     <Edit className="h-4 w-4" />
                     Edit Profile
                   </Button>
@@ -216,7 +239,9 @@ export default function ProfilePage() {
                 <DialogContent className="animate-scale-in">
                   <DialogHeader>
                     <DialogTitle>Edit Profile</DialogTitle>
-                    <DialogDescription>Make changes to your profile information.</DialogDescription>
+                    <DialogDescription>
+                      Make changes to your profile information.
+                    </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleEditSubmit} className="space-y-4">
                     <div className="space-y-2 animate-slide-up stagger-1">
@@ -243,7 +268,10 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="space-y-2 animate-slide-up stagger-3">
-                      <Label htmlFor="github_username" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="github_username"
+                        className="flex items-center gap-2"
+                      >
                         <Github className="h-4 w-4" />
                         GitHub Username
                       </Label>
@@ -257,8 +285,15 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="space-y-2 animate-slide-up stagger-4">
-                      <Label htmlFor="leetcode_username" className="flex items-center gap-2">
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                      <Label
+                        htmlFor="leetcode_username"
+                        className="flex items-center gap-2"
+                      >
+                        <svg
+                          className="h-4 w-4"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
                           <path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.516-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.835 0 1.498.513 2.895 1.494 3.875l4.347 4.361c.981.979 2.337 1.452 3.834 1.452s2.853-.512 3.835-1.494l2.609-2.637c.514-.514.496-1.365-.039-1.9s-1.386-.553-1.899-.039zM20.811 13.01H10.666c-.702 0-1.27.604-1.27 1.346s.568 1.346 1.27 1.346h10.145c.701 0 1.27-.604 1.27-1.346s-.569-1.346-1.27-1.346z" />
                         </svg>
                         LeetCode Username
@@ -273,7 +308,10 @@ export default function ProfilePage() {
                       />
                     </div>
                     <DialogFooter>
-                      <Button type="submit" className="btn-hover-effect animate-fade-in">
+                      <Button
+                        type="submit"
+                        className="btn-hover-effect animate-fade-in"
+                      >
                         Save changes
                       </Button>
                     </DialogFooter>
@@ -297,91 +335,143 @@ export default function ProfilePage() {
                 <Github className="h-4 w-4" />
                 <span>Social Stats</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <TabsTrigger
+                value="analytics"
+                className="flex items-center gap-2"
+              >
                 <BarChart className="h-4 w-4" />
                 <span>Analytics</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="personal" className="space-y-4 pt-6 tab-transition">
+            <TabsContent
+              value="personal"
+              className="space-y-4 pt-6 tab-transition"
+            >
               <Card>
                 <CardHeader>
                   <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Your personal details and contact information</CardDescription>
+                  <CardDescription>
+                    Your personal details and contact information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Username</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Username
+                      </h3>
                       <p className="text-base">{profile?.username}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Full Name</h3>
-                      <p className="text-base">{profile?.name?.String || "Not provided"}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Full Name
+                      </h3>
+                      <p className="text-base">
+                        {profile?.name?.String || "Not provided"}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Email
+                      </h3>
                       <p className="text-base">{profile?.email}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Phone</h3>
-                      <p className="text-base">{profile?.phone?.String || "Not provided"}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Phone
+                      </h3>
+                      <p className="text-base">
+                        {profile?.phone?.String || "Not provided"}
+                      </p>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Bio</h3>
-                    <p className="text-base whitespace-pre-line">{profile?.bio?.String || "No bio provided"}</p>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Bio
+                    </h3>
+                    <p className="text-base whitespace-pre-line">
+                      {profile?.bio?.String || "No bio provided"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="academic" className="space-y-4 pt-6 tab-transition">
+            <TabsContent
+              value="academic"
+              className="space-y-4 pt-6 tab-transition"
+            >
               <Card>
                 <CardHeader>
                   <CardTitle>Academic Information</CardTitle>
-                  <CardDescription>Your educational background and qualifications</CardDescription>
+                  <CardDescription>
+                    Your educational background and qualifications
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">College Name</h3>
-                      <p className="text-base">{profile?.college_name?.String || "Not provided"}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        College Name
+                      </h3>
+                      <p className="text-base">
+                        {profile?.college_name?.String || "Not provided"}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Year of Study</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Year of Study
+                      </h3>
                       <p className="text-base">
                         {profile?.year_of_study?.Valid
-                          ? `${profile.year_of_study.Int32}${getOrdinalSuffix(profile.year_of_study.Int32)} Year`
+                          ? `${profile.year_of_study.Int32}${getOrdinalSuffix(
+                              profile.year_of_study.Int32
+                            )} Year`
                           : "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Degree</h3>
-                      <p className="text-base">{profile?.degree?.String || "Not provided"}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Degree
+                      </h3>
+                      <p className="text-base">
+                        {profile?.degree?.String || "Not provided"}
+                      </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">Branch</h3>
-                      <p className="text-base">{profile?.branch?.String || "Not provided"}</p>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        Branch
+                      </h3>
+                      <p className="text-base">
+                        {profile?.branch?.String || "Not provided"}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="social" className="space-y-4 pt-6 tab-transition animate-fade-in">
+            <TabsContent
+              value="social"
+              className="space-y-4 pt-6 tab-transition animate-fade-in"
+            >
               <Card className="overflow-hidden card-hover animate-scale-in">
                 <CardHeader>
                   <CardTitle>GitHub Stats</CardTitle>
-                  <CardDescription>Your GitHub activity and contributions</CardDescription>
+                  <CardDescription>
+                    Your GitHub activity and contributions
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {profile?.github_username?.String ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <div className="overflow-hidden rounded-lg border animate-slide-up stagger-1">
                         <img
-                          src={`https://github-readme-stats.vercel.app/api?username=${profile.github_username.String}&theme=${getGithubTheme()}&show_icons=true&hide_border=true&count_private=true`}
+                          src={`https://github-readme-stats.vercel.app/api?username=${
+                            profile.github_username.String
+                          }&theme=${getGithubTheme()}&show_icons=true&hide_border=true&count_private=true`}
                           alt="GitHub Stats"
                           className="w-full h-auto"
                           loading="lazy"
@@ -389,7 +479,9 @@ export default function ProfilePage() {
                       </div>
                       <div className="overflow-hidden rounded-lg border animate-slide-up stagger-2">
                         <img
-                          src={`https://github-readme-streak-stats.herokuapp.com/?user=${profile.github_username.String}&theme=${getGithubTheme()}&hide_border=true`}
+                          src={`https://github-readme-streak-stats.herokuapp.com/?user=${
+                            profile.github_username.String
+                          }&theme=${getGithubTheme()}&hide_border=true`}
                           alt="GitHub Streak"
                           className="w-full h-auto"
                           loading="lazy"
@@ -397,7 +489,9 @@ export default function ProfilePage() {
                       </div>
                       <div className="overflow-hidden rounded-lg border lg:col-span-2 animate-slide-up stagger-3">
                         <img
-                          src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${profile.github_username.String}&theme=${getGithubTheme()}&show_icons=true&hide_border=true&layout=compact`}
+                          src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${
+                            profile.github_username.String
+                          }&theme=${getGithubTheme()}&show_icons=true&hide_border=true&layout=compact`}
                           alt="Top Languages"
                           className="w-full h-auto"
                           loading="lazy"
@@ -407,8 +501,13 @@ export default function ProfilePage() {
                   ) : (
                     <div className="text-center py-12 text-muted-foreground animate-fade-in">
                       <Github className="h-16 w-16 mx-auto mb-6 opacity-20 animate-float" />
-                      <p className="text-lg font-medium">No GitHub username provided</p>
-                      <p className="text-sm mt-2">Add your GitHub username in your profile to see your stats</p>
+                      <p className="text-lg font-medium">
+                        No GitHub username provided
+                      </p>
+                      <p className="text-sm mt-2">
+                        Add your GitHub username in your profile to see your
+                        stats
+                      </p>
                       <Button
                         variant="outline"
                         className="mt-4 animate-fade-in btn-hover-effect"
@@ -425,13 +524,17 @@ export default function ProfilePage() {
               <Card className="overflow-hidden card-hover animate-scale-in">
                 <CardHeader>
                   <CardTitle>LeetCode Stats</CardTitle>
-                  <CardDescription>Your LeetCode activity and problem-solving stats</CardDescription>
+                  <CardDescription>
+                    Your LeetCode activity and problem-solving stats
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {profile?.leetcode_username?.String ? (
                     <div className="overflow-hidden rounded-lg border animate-slide-up">
                       <img
-                        src={`https://leetcard.jacoblin.cool/${profile.leetcode_username.String}?theme=${getLeetcodeTheme()}&font=Poppins&ext=heatmap`}
+                        src={`https://leetcard.jacoblin.cool/${
+                          profile.leetcode_username.String
+                        }?theme=${getLeetcodeTheme()}&font=Poppins&ext=heatmap`}
                         alt="LeetCode Stats"
                         className="w-full h-auto"
                         loading="lazy"
@@ -446,8 +549,13 @@ export default function ProfilePage() {
                       >
                         <path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.516-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.835 0 1.498.513 2.895 1.494 3.875l4.347 4.361c.981.979 2.337 1.452 3.834 1.452s2.853-.512 3.835-1.494l2.609-2.637c.514-.514.496-1.365-.039-1.9s-1.386-.553-1.899-.039zM20.811 13.01H10.666c-.702 0-1.27.604-1.27 1.346s.568 1.346 1.27 1.346h10.145c.701 0 1.27-.604 1.27-1.346s-.569-1.346-1.27-1.346z" />
                       </svg>
-                      <p className="text-lg font-medium">No LeetCode username provided</p>
-                      <p className="text-sm mt-2">Add your LeetCode username in your profile to see your stats</p>
+                      <p className="text-lg font-medium">
+                        No LeetCode username provided
+                      </p>
+                      <p className="text-sm mt-2">
+                        Add your LeetCode username in your profile to see your
+                        stats
+                      </p>
                       <Button
                         variant="outline"
                         className="mt-4 animate-fade-in btn-hover-effect"
@@ -464,7 +572,9 @@ export default function ProfilePage() {
               <Card className="overflow-hidden card-hover animate-scale-in">
                 <CardHeader>
                   <CardTitle>Social Links</CardTitle>
-                  <CardDescription>Your professional and social media profiles</CardDescription>
+                  <CardDescription>
+                    Your professional and social media profiles
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -522,37 +632,89 @@ export default function ProfilePage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="analytics" className="space-y-4 pt-6 tab-transition">
+            <TabsContent
+              value="analytics"
+              className="space-y-4 pt-6 tab-transition"
+            >
               <Card>
                 <CardHeader>
                   <CardTitle>Activity Analytics</CardTitle>
-                  <CardDescription>Visualize your activity and progress</CardDescription>
+                  <CardDescription>
+                    Visualize your activity and progress
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-8">
                     <div>
-                      <h3 className="text-lg font-medium mb-4">Notes Created</h3>
+                      <h3 className="text-lg font-medium mb-4">
+                        Notes Created This Month
+                      </h3>
                       <div className="h-64 w-full bg-muted/30 rounded-lg flex items-center justify-center">
                         <div className="space-y-4 text-center">
-                          <BarChart className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                          <div className="text-4xl font-bold text-primary">
+                            24
+                          </div>
                           <div>
-                            <p className="text-muted-foreground">Analytics coming soon</p>
-                            <p className="text-sm text-muted-foreground/70">Create notes to see your activity</p>
+                            <p className="text-lg font-medium">Notes Created</p>
+                            <p className="text-sm text-muted-foreground">
+                              +8 from last month
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium mb-4">Profile Completion</h3>
+                      <h3 className="text-lg font-medium mb-4">Study Streak</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card>
+                          <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-green-500">
+                              12
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Current Streak
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-blue-500">
+                              45
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Longest Streak
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-purple-500">
+                              156
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Total Study Days
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">
+                        Profile Completion
+                      </h3>
                       <div className="w-full bg-muted/30 rounded-full h-4">
                         <div
-                          className="bg-primary h-4 rounded-full"
-                          style={{ width: `${calculateProfileCompletion(profile)}%` }}
+                          className="bg-primary h-4 rounded-full transition-all duration-500"
+                          style={{
+                            width: `${calculateProfileCompletion(profile)}%`,
+                          }}
                         ></div>
                       </div>
                       <p className="text-sm text-muted-foreground mt-2">
-                        Your profile is {calculateProfileCompletion(profile)}% complete
+                        Your profile is {calculateProfileCompletion(profile)}%
+                        complete
                       </p>
                     </div>
                   </div>
@@ -563,26 +725,26 @@ export default function ProfilePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
 
 function getOrdinalSuffix(num: number): string {
-  const j = num % 10
-  const k = num % 100
+  const j = num % 10;
+  const k = num % 100;
   if (j === 1 && k !== 11) {
-    return "st"
+    return "st";
   }
   if (j === 2 && k !== 12) {
-    return "nd"
+    return "nd";
   }
   if (j === 3 && k !== 13) {
-    return "rd"
+    return "rd";
   }
-  return "th"
+  return "th";
 }
 
 function calculateProfileCompletion(profile: any): number {
-  if (!profile) return 0
+  if (!profile) return 0;
 
   const fields = [
     profile.username,
@@ -599,8 +761,8 @@ function calculateProfileCompletion(profile: any): number {
     profile.resume_link?.String,
     profile.profile_picture?.String,
     profile.bio?.String,
-  ]
+  ];
 
-  const filledFields = fields.filter(Boolean).length
-  return Math.round((filledFields / fields.length) * 100)
+  const filledFields = fields.filter(Boolean).length;
+  return Math.round((filledFields / fields.length) * 100);
 }
