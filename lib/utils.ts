@@ -16,3 +16,20 @@ export async function saltAndHashPassword(password: string): Promise<string> {
 export async function verifyPassword(password: string, hash: string) {
   return await bcrypt.compare(password, hash);
 }
+
+export const truncateContent = (content: string, maxLength = 150) => {
+  if (content.length <= maxLength) return content;
+  return content.substring(0, maxLength) + "...";
+};
+
+export const formatDate = (dateString: string) => {
+  try {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch (error) {
+    return "Invalid date";
+  }
+};

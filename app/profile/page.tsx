@@ -321,23 +321,32 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-              <TabsTrigger value="personal" className="flex items-center gap-2">
+          <Tabs defaultValue="personal">
+            <TabsList className="h-auto p-0 bg-transparent justify-start border-b rounded-none w-auto">
+              <TabsTrigger
+                value="personal"
+                className="rounded-none gap-2 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none"
+              >
                 <User className="h-4 w-4" />
                 <span>Personal Info</span>
               </TabsTrigger>
-              <TabsTrigger value="academic" className="flex items-center gap-2">
+              <TabsTrigger
+                value="academic"
+                className="rounded-none gap-2 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none"
+              >
                 <GraduationCap className="h-4 w-4" />
                 <span>Academic Info</span>
               </TabsTrigger>
-              <TabsTrigger value="social" className="flex items-center gap-2">
+              <TabsTrigger
+                value="social"
+                className="rounded-none gap-2 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none"
+              >
                 <Github className="h-4 w-4" />
                 <span>Social Stats</span>
               </TabsTrigger>
               <TabsTrigger
                 value="analytics"
-                className="flex items-center gap-2"
+                className="rounded-none gap-2 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none"
               >
                 <BarChart className="h-4 w-4" />
                 <span>Analytics</span>

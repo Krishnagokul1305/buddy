@@ -4,7 +4,7 @@ import { ThemeToggleEnhanced } from "./theme-toggle-enhanced";
 
 function Header() {
   return (
-    <header className="w-full border-b sticky top-0 z-30 backdrop-blur-md bg-white/70 dark:bg-black/70">
+    <header className="w-full border-b sticky top-0 z-30 backdrop-blur-md ">
       <div className="container flex h-16 items-center justify-between">
         <Link
           href="/"
