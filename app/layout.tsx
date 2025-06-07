@@ -1,31 +1,33 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import AuthProvider from "@/components/auth-provider"
-import { APP_NAME, APP_DESCRIPTION } from "@/lib/config"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import AuthProvider from "@/components/auth-provider";
+import { APP_NAME, APP_DESCRIPTION } from "@/lib/config";
+import Header from "@/components/Header";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: APP_NAME + " - " + APP_DESCRIPTION,
   description: "A platform to help you track your placement journey",
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
+          <Header />
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
