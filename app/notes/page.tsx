@@ -1,11 +1,11 @@
-import type React from "react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Plus, Share } from "lucide-react";
 
 import NotesCard from "@/components/NotesCard";
 import SharedNotesCard from "@/components/SharedNotesCard";
 import Link from "next/link";
+import prisma from "../../lib/prisma";
+import { auth } from "@/lib/auth";
 
 // Dummy data types
 interface Note {
@@ -16,7 +16,7 @@ interface Note {
   created_at: string;
 }
 
-export default function NotesPage() {
+export default async function NotesPage() {
   // if (loading) {
   //   return (
   //     <div className="flex min-h-screen flex-col">
@@ -44,12 +44,15 @@ export default function NotesPage() {
   //     </div>
   //   );
   // }
+
   const notes: Note[] = [];
   const sharedNotes: Note[] = [];
 
+  console.log(await auth());
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1 container py-8">
+    <div className="min-h-screen">
+      <main className="flex-1 container py-8 max-w-7xl mx-auto">
         <div className="flex flex-col gap-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">My Notes</h1>

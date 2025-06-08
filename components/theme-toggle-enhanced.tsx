@@ -1,37 +1,53 @@
-"use client"
+"use client";
 
-import { Moon, Sun, Monitor } from "lucide-react"
-import { useTheme } from "next-themes"
-import { useState, useEffect } from "react"
+import { Moon, Sun, Monitor } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function ThemeToggleEnhanced() {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   // Avoid hydration mismatch by only rendering after mount
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return (
       <Button variant="outline" size="icon" className="rounded-full w-9 h-9">
         <span className="sr-only">Toggle theme</span>
       </Button>
-    )
+    );
   }
 
-  const currentTheme = theme || "system"
+  const currentTheme = theme || "system";
 
   const themeIcons = {
-    light: <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />,
-    dark: <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />,
-    system: <Monitor className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />,
-  }
+    light: (
+      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+    ),
+    dark: (
+      <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+    ),
+    system: (
+      <Monitor className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+    ),
+  };
 
   return (
     <TooltipProvider>
@@ -51,23 +67,29 @@ export function ThemeToggleEnhanced() {
             <DropdownMenuContent align="end" className="animate-scale-in">
               <DropdownMenuItem
                 onClick={() => setTheme("light")}
-                className={`flex items-center gap-2 cursor-pointer ${currentTheme === "light" ? "bg-muted" : ""}`}
+                className={`flex items-center gap-2 cursor-pointer ${
+                  currentTheme === "light" ? "bg-muted" : ""
+                }`}
               >
-                <Sun className="h-4 w-4" />
+                <Sun className="h-5 w-5" />
                 <span>Light</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setTheme("dark")}
-                className={`flex items-center gap-2 cursor-pointer ${currentTheme === "dark" ? "bg-muted" : ""}`}
+                className={`flex items-center gap-2 cursor-pointer ${
+                  currentTheme === "dark" ? "bg-muted" : ""
+                }`}
               >
-                <Moon className="h-4 w-4" />
+                <Moon className="h-5 w-5" />
                 <span>Dark</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setTheme("system")}
-                className={`flex items-center gap-2 cursor-pointer ${currentTheme === "system" ? "bg-muted" : ""}`}
+                className={`flex items-center gap-2 cursor-pointer ${
+                  currentTheme === "system" ? "bg-muted" : ""
+                }`}
               >
-                <Monitor className="h-4 w-4" />
+                <Monitor className="h-5 w-5" />
                 <span>System</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -78,5 +100,5 @@ export function ThemeToggleEnhanced() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

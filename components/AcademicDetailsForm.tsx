@@ -14,7 +14,6 @@ import {
 function AcademicDetailsForm() {
   const { register, setValue, watch } = useFormContext();
 
-  // To ensure controlled UI for Selects
   const degree = watch("degree");
   const year_of_study = watch("year_of_study");
 

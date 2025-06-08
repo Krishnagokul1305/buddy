@@ -6,7 +6,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
 function PersonalDetailsForm() {
-  const { register} = useFormContext();
+  const { register } = useFormContext();
 
   return (
     <div className="space-y-3">
@@ -46,13 +46,13 @@ function PersonalDetailsForm() {
       </div>
 
       <div className=" animate-slide-up stagger-4">
-        <Label htmlFor="password_hash">Password</Label>
+        <Label htmlFor="password">Password</Label>
         <Input
-          id="password_hash"
+          id="password"
           type="password"
           placeholder="••••••••"
           required
-          {...register("password_hash")}
+          {...register("password")}
           className="form-field-animation"
         />
       </div>

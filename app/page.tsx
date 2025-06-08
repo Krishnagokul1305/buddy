@@ -40,7 +40,7 @@ export default function Home() {
             <div className="absolute top-1/2 left-1/2 h-32 w-32 rounded-full bg-pink-200/30 blur-2xl animate-pulse [animation-delay:4s]" />
           </div> */}
 
-          <div className="container relative z-10 px-4 md:px-6 mt-5 md:mt-0">
+          <div className="container relative z-10 px-4 md:px-6 mt-5 lg:mt-0">
             <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:gap-16 items-center">
               <div
                 className={`space-y-8 transition-all duration-1000 ${
@@ -116,7 +116,7 @@ export default function Home() {
                     : "translate-y-10 opacity-0"
                 }`}
               >
-                <div className="relative md:mb-0 mb-7">
+                <div className="relative lg:mb-0 mb-7">
                   {/* Main Dashboard Mockup */}
                   <div className="relative z-10 rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border overflow-hidden">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
@@ -292,9 +292,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 relative">
-              {/* Connection Lines */}
-
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 relative">
               {[
                 {
                   step: "01",
@@ -345,7 +343,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   name: "Sarah Chen",
