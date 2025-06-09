@@ -1,6 +1,4 @@
-import LoginForm from "@/components/LoginForm";
-
-export default function LoginPage() {
+function layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background to-muted/30">
@@ -11,8 +9,10 @@ export default function LoginPage() {
             style={{ animationDelay: "1s" }}
           ></div>
         </div>
-        <LoginForm />
+        {children}
       </main>
     </div>
   );
 }
+
+export default layout;

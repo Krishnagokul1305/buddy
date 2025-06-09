@@ -1,57 +1,38 @@
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { verifyPassword, saltAndHashPassword } from "./utils";
-
-const dummyUsers: {
-  email: string;
-  password: string;
-  hashedPassword?: string;
-}[] = [
-  {
-    email: "alice@example.com",
-    password: "alice123",
-  },
-  {
-    email: "bob@example.com",
-    password: "bob123",
-  },
-];
-
-let usersReady = false;
-async function getUsers() {
-  if (!usersReady) {
-    for (const user of dummyUsers) {
-      user.hashedPassword = await saltAndHashPassword(user.password);
-    }
-    usersReady = true;
-  }
-  return dummyUsers;
-}
+import CredentialsProvider from "next-auth/providers/credentials";
+import { verifyPassword } from "./utils";
+import prisma from "@/lib/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Credentials({
+    CredentialsProvider({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const users = await getUsers();
-        const user = users.find((u) => u.email === credentials?.email);
+        const email = credentials?.email;
+        const password = credentials?.password;
 
-        if (!user || !user.hashedPassword)
+        if (typeof email !== "string" || typeof password !== "string") {
+          throw new Error("Invalid credentials format");
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        const isValid = await verifyPassword(password, user.password);
+
+        if (!isValid) {
           throw new Error("Invalid credentials");
+        }
 
-        const isValid = await verifyPassword(
-          credentials!.password as string,
-          user.hashedPassword
-        );
-
-        if (!isValid) throw new Error("Invalid credentials");
-
-        // Return basic user object (must have `id` or `email`)
         return {
-          id: user.email,
           email: user.email,
         };
       },

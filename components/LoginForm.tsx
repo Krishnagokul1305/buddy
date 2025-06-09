@@ -14,27 +14,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { ArrowLeft, LogIn } from "lucide-react";
-import { useAuth } from "@/components/auth-provider";
-import { signInAction } from "@/lib/actions";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
-  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
 
     try {
-       await signInAction({ email, password });
-      router.push("/profile");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      if (res?.error) {
+        console.log(res);
+        throw new Error(res.error);
+      } else {
+        toast.success("Logged in successfully");
+        router.push("/profile");
+      }
+    } catch (err: any) {
+      toast("Something went wrong");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -56,11 +63,6 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 text-sm text-white bg-destructive rounded animate-shake">
-              {error}
-            </div>
-          )}
           <div className="space-y-2 animate-slide-up stagger-1">
             <Label htmlFor="email">Email</Label>
             <Input

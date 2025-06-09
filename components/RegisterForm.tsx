@@ -1,10 +1,8 @@
 "use client";
 
 import { useForm, FormProvider } from "react-hook-form";
-import type { RegisterUserData } from "@/types/user";
+import type { UserData } from "@/types/user";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { userService } from "@/services/user.service";
 import {
   Card,
   CardHeader,
@@ -20,18 +18,20 @@ import Link from "next/link";
 import PersonalDetailsForm from "./PersonalDetailsForm";
 import AcademicDetailsForm from "./AcademicDetailsForm";
 import SocialMediaForm from "./SocialMediaForm";
+import { signUpAction } from "@/lib/actions";
+import { toast } from "sonner";
 
 function RegisterForm() {
-  const methods = useForm<RegisterUserData>({
+  const methods = useForm<UserData>({
     defaultValues: {
       username: "",
       email: "",
-      password_hash: "",
+      password: "",
       name: "",
       phone: "",
       bio: "",
       college_name: "",
-      year_of_study: "",
+      year_of_study: 0,
       degree: "",
       branch: "",
       github_username: "",
@@ -39,7 +39,6 @@ function RegisterForm() {
       linkedin_username: "",
       resume_link: "",
       profile_picture: "",
-      is_verified: false,
     },
   });
 
@@ -48,20 +47,16 @@ function RegisterForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const router = useRouter();
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("personal");
 
-  const onSubmit = async (data: RegisterUserData) => {
-    setError("");
+  const onSubmit = async (data: UserData) => {
     try {
-      const success = await userService.registerUser(data);
-      console.log(data);
-      if (success) router.push("/login");
-      else setError("Registration failed. Please try again.");
+      await signUpAction(data);
+      toast("Registration successful!");
     } catch (err) {
       console.error(err);
-      setError("An error occurred. Please try again.");
+      toast("Registration failed!");
     }
   };
 

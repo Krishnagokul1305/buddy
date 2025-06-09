@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import AuthProvider from "@/components/auth-provider";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/config";
 import Header from "@/components/Header";
+import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,8 +25,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <Header />
-          <AuthProvider>{children}</AuthProvider>
+          <SessionProvider>
+            <Toaster position="top-right" />
+            {children}
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
