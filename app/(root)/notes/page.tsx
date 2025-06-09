@@ -1,10 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Plus, Share } from "lucide-react";
 
-import NotesCard from "@/components/NotesCard";
-import SharedNotesCard from "@/components/SharedNotesCard";
-import Link from "next/link";
-import prisma from "../../lib/prisma";
 import { auth } from "@/lib/auth";
 
 // Dummy data types
@@ -75,52 +71,32 @@ export default async function NotesPage() {
                 Shared Notes
               </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="my-notes" className="pt-6">
-              {notes.length === 0 ? (
-                <div className="text-center py-12">
-                  <BookOpen className="h-16 w-16 mx-auto mb-6 text-muted-foreground/30" />
-                  <h2 className="text-xl font-medium mb-2">No notes yet</h2>
-                  <p className="text-muted-foreground mb-6">
-                    Create your first note to get started
-                  </p>
-                  <Link
-                    href={"/notes/create"}
-                    className="text-white bg-primary p-3 flex items-center justify-center w-fit rounded-lg mx-auto"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Note
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {notes.map((note, index) => (
-                    <NotesCard note={note} key={index} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="shared-notes" className="pt-6">
-              {sharedNotes.length === 0 ? (
-                <div className="text-center py-12">
-                  <Share className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
-                  <h2 className="text-xl font-medium mb-2">No shared notes</h2>
-                  <p className="text-muted-foreground">
-                    Shared notes from other users will appear here
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {sharedNotes.map((note) => (
-                    <SharedNotesCard note={note} key={note.id} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
           </Tabs>
         </div>
       </main>
     </div>
   );
 }
+
+//  <div className="text-center py-12">
+//                   <BookOpen className="h-16 w-16 mx-auto mb-6 text-muted-foreground/30" />
+//                   <h2 className="text-xl font-medium mb-2">No notes yet</h2>
+//                   <p className="text-muted-foreground mb-6">
+//                     Create your first note to get started
+//                   </p>
+//                   <Link
+//                     href={"/notes/create"}
+//                     className="text-white bg-primary p-3 flex items-center justify-center w-fit rounded-lg mx-auto"
+//                   >
+//                     <Plus className="h-4 w-4 mr-2" />
+//                     Create Note
+//                   </Link>
+//                 </div>
+
+//  <div className="text-center py-12">
+//                   <Share className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
+//                   <h2 className="text-xl font-medium mb-2">No shared notes</h2>
+//                   <p className="text-muted-foreground">
+//                     Shared notes from other users will appear here
+//                   </p>
+//                 </div>

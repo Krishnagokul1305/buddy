@@ -23,7 +23,7 @@ import { userService } from "@/services/user.service";
 export default async function ProfilePage() {
   const profile = await userService.getCurrentUserProfile();
   return (
-    <div className="flex min-h-screen flex-col max-w-screen-xl mx-auto">
+    <div className="flex min-h-screen flex-col w-full">
       <main className="flex-1 container py-8">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col sm:flex-row px-2 items-start sm:items-center gap-4">

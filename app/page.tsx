@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
@@ -29,6 +30,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col overflow-hidden">
+      <Header />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative  min-h-screen flex items-center justify-center overflow-hidden">
