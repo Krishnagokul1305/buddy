@@ -1,101 +1,46 @@
-import { ApiService } from "./api.service"
-import type { Note } from "@/types/note"
+import { auth } from "@/lib/auth";
+import prisma from "../lib/prisma";
+import { Note } from "@/types/note";
 
-// Response types
-interface NotesResponse {
-  success: boolean
-  data: Note[]
-  message?: string
-}
-
-interface NoteResponse {
-  success: boolean
-  data: Note
-  message?: string
-}
-
-export class NotesService extends ApiService {
-  // Get all notes for current user
-  async getNotes(token: string): Promise<Note[]> {
+class NotesService {
+  async getUserNotes() {
     try {
-      const response = await this.get<NotesResponse>("api/notes/", token)
-      if (response.success) {
-        return response.data || []
+      const session = await auth();
+      if (!session?.user) {
+        console.warn("No user session found.");
+        return null;
       }
-      return []
+
+      if (!session.user.id) {
+        console.error("Session user ID is missing.");
+        return null;
+      }
+
+      const notes = await prisma.note.findMany({
+        where: {
+          userId: Number(session.user.id),
+        },
+      });
+      return notes;
     } catch (error) {
-      console.error("Get notes error:", error)
-      return []
+      console.error("Error fetching user notes:", error);
+      return null;
     }
   }
 
-  // Get a single note by ID
-  async getNote(noteId: number | string, token: string): Promise<Note | null> {
+  async getNoteBySlug(slug: string): Promise<Note | null> {
     try {
-      const response = await this.get<NoteResponse>(`api/notes/${noteId}`, token)
-      if (response.success) {
-        return response.data
-      }
-      return null
+      const note = await prisma.note.findUnique({
+        where: {
+          share_slug: slug,
+        },
+      });
+      return note;
     } catch (error) {
-      console.error("Get note error:", error)
-      return null
-    }
-  }
-
-  // Create a new note
-  async createNote(noteData: Partial<Note>, token: string): Promise<Note | null> {
-    try {
-      const response = await this.post<NoteResponse>("api/notes/", noteData, token)
-      if (response.success) {
-        return response.data
-      }
-      return null
-    } catch (error) {
-      console.error("Create note error:", error)
-      return null
-    }
-  }
-
-  // Update an existing note
-  async updateNote(noteId: number | string, noteData: Partial<Note>, token: string): Promise<Note | null> {
-    try {
-      const response = await this.put<NoteResponse>(`api/notes/${noteId}`, noteData, token)
-      if (response.success) {
-        return response.data
-      }
-      return null
-    } catch (error) {
-      console.error("Update note error:", error)
-      return null
-    }
-  }
-
-  // Delete a note
-  async deleteNote(noteId: number | string, token: string): Promise<boolean> {
-    try {
-      const response = await this.delete<{ success: boolean }>(`api/notes/${noteId}`, token)
-      return response.success
-    } catch (error) {
-      console.error("Delete note error:", error)
-      return false
-    }
-  }
-
-  // Get a public note by slug
-  async getPublicNote(slug: string): Promise<Note | null> {
-    try {
-      const response = await this.get<NoteResponse>(`api/public/${slug}`)
-      if (response.success) {
-        return response.data
-      }
-      return null
-    } catch (error) {
-      console.error("Get public note error:", error)
-      return null
+      console.error("Error fetching note by slug:", error);
+      return null;
     }
   }
 }
 
-// Create singleton instance
-export const notesService = new NotesService()
+export const notesService = new NotesService();

@@ -3,7 +3,6 @@ import { BookOpen, Plus, Share } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 
-// Dummy data types
 interface Note {
   id: number;
   title: string;

@@ -24,6 +24,24 @@ export class UserService {
       return null;
     }
   }
+
+  async updateUserProfile(userData: UserData) {
+    try {
+      const session = await auth();
+      if (!session?.user?.email) {
+        return null;
+      }
+      await prisma.user.update({
+        where: {
+          email: session.user.email,
+        },
+        data: userData,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 // Create singleton instance
