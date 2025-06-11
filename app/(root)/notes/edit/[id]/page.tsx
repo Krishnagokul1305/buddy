@@ -2,12 +2,17 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import NotesForm from "@/components/NotesForm";
+import { notesService } from "@/services/notes.service";
+import { Note } from "@/types/note";
 
 export default async function EditNotePage({
   params,
 }: {
   params: { id: string };
 }) {
+  const { id } = await params;
+  const note: Note | null = await notesService.getNoteById(+id);
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 container py-8">
@@ -25,7 +30,7 @@ export default async function EditNotePage({
           </div>
 
           <Card className="shadow-lg">
-            <NotesForm />
+            <NotesForm note={note} isEdit={true} />
           </Card>
         </div>
       </main>

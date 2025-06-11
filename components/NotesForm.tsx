@@ -16,6 +16,10 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Eye, Save } from "lucide-react";
+import { Note } from "@/types/note";
+import { createNoteAction, updateNoteAction } from "@/lib/actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   title: string;
@@ -23,7 +27,13 @@ type FormValues = {
   is_public: boolean;
 };
 
-function NotesForm({ defaultValues }: { defaultValues?: FormValues }) {
+function NotesForm({
+  note,
+  isEdit = false,
+}: {
+  note?: Note | null;
+  isEdit?: boolean;
+}) {
   const {
     register,
     handleSubmit,
@@ -31,17 +41,32 @@ function NotesForm({ defaultValues }: { defaultValues?: FormValues }) {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    defaultValues,
+    defaultValues: {
+      content: note?.content || "",
+      is_public: note?.is_public || false,
+      title: note?.title || "",
+    },
   });
-
-  console.log(defaultValues);
 
   const [activeTab, setActiveTab] = useState("write");
   const content = watch("content");
+  const router = useRouter();
   const isPublic = watch("is_public");
 
-  function onSubmit(data: FormValues) {
-    console.log(data);
+  async function onSubmit(data: FormValues) {
+    try {
+      if (!isEdit) {
+        await createNoteAction(data);
+        toast("Created new note");
+      }
+      if (isEdit && note) {
+        await updateNoteAction(note?.id, data);
+        toast("Updated Successfully");
+      }
+      router.push("/notes");
+    } catch (error) {
+      toast("Error creating note");
+    }
   }
 
   return (

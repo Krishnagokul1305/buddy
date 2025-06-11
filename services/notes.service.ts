@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth";
 import prisma from "../lib/prisma";
-import { Note } from "@/types/note";
+import { Note, NotesFormValues } from "@/types/note";
+import { generateSlug } from "@/lib/utils";
 
 class NotesService {
-  async getUserNotes() {
+  async getUserNotes(): Promise<Note[] | null> {
     try {
       const session = await auth();
       if (!session?.user) {
@@ -24,6 +25,91 @@ class NotesService {
       return notes;
     } catch (error) {
       console.error("Error fetching user notes:", error);
+      return null;
+    }
+  }
+
+  async getNoteById(id: number) {
+    try {
+      const note = await prisma.note.findUnique({
+        where: {
+          id,
+        },
+      });
+      return note;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async createNote(noteData: NotesFormValues) {
+    try {
+      const session = await auth();
+      if (!session?.user) {
+        console.warn("No user session found.");
+        return null;
+      }
+
+      if (!session.user.id) {
+        console.error("Session user ID is missing.");
+        return null;
+      }
+      await prisma.note.create({
+        data: {
+          ...noteData,
+          userId: +session.user.id,
+          share_slug: generateSlug(noteData.title),
+        },
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async updateNote(noteId: number, noteData: NotesFormValues) {
+    try {
+      const session = await auth();
+      if (!session?.user) {
+        console.warn("No user session found.");
+        return null;
+      }
+
+      if (!session.user.id) {
+        console.error("Session user ID is missing.");
+        return null;
+      }
+
+      await prisma.note.update({
+        where: {
+          id: noteId,
+        },
+        data: {
+          ...noteData,
+        },
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async deleteNote(id: number) {
+    try {
+      const session = await auth();
+      if (!session?.user) {
+        console.warn("No user session found.");
+        return null;
+      }
+
+      if (!session.user.id) {
+        console.error("Session user ID is missing.");
+        return null;
+      }
+      await prisma.note.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
       return null;
     }
   }

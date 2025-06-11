@@ -3,13 +3,13 @@ export interface Note {
   title: string;
   content: string;
   is_public: boolean;
-  user_id: number;
+  userId: number;
   share_slug: string;
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
-export interface NoteFormData {
+export interface NotesFormValues {
   title: string;
   content: string;
   is_public: boolean;

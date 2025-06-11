@@ -20,6 +20,7 @@ import AcademicDetailsForm from "./AcademicDetailsForm";
 import SocialMediaForm from "./SocialMediaForm";
 import { signUpAction } from "@/lib/actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function RegisterForm() {
   const methods = useForm<UserData>({
@@ -47,6 +48,8 @@ function RegisterForm() {
     formState: { isSubmitting },
   } = methods;
 
+  const router = useRouter();
+
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("personal");
 
@@ -54,6 +57,7 @@ function RegisterForm() {
     try {
       await signUpAction(data);
       toast("Registration successful!");
+      router.push("/login");
     } catch (err) {
       console.error(err);
       toast("Registration failed!");
