@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import bcrypt from "bcryptjs";
+import slugify from "slugify";
+import { nanoid } from "nanoid";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,3 +35,9 @@ export const formatDate = (dateString: string) => {
     return "Invalid date";
   }
 };
+
+export function generateSlug(title: string): string {
+  const baseSlug = slugify(title, { lower: true, strict: true });
+  const uniqueSuffix = nanoid(8);
+  return `${baseSlug}-${uniqueSuffix}`;
+}
