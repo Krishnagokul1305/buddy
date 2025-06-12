@@ -7,6 +7,7 @@ import { Note } from "@/types/note";
 
 export default async function NotesPage() {
   const notes: Note[] | null = await notesService.getUserNotes();
+  console.log(notes);
   if (!notes || notes.length == 0) {
     return (
       <>

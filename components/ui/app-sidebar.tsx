@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation"; // or "next/navigation" if using App Router
-import { Settings, BookOpen, Home, Folder, User } from "lucide-react";
+import { Settings, BookOpen, Home, Folder, User, File } from "lucide-react";
 
 import {
   Sidebar,
@@ -29,6 +29,11 @@ const navigationItems = [
     title: "Notes",
     icon: Folder,
     url: "/notes",
+  },
+  {
+    title: "Files",
+    icon: File,
+    url: "/files",
   },
   {
     title: "Profile",
