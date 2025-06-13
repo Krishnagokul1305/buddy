@@ -54,7 +54,6 @@ function ProfileEditForm({
     defaultValues: {
       username: defaultvalues?.username,
       email: defaultvalues?.email,
-      password: "",
       name: defaultvalues?.name || "",
       phone: defaultvalues?.phone || "",
       college_name: defaultvalues?.college_name || "",
@@ -77,6 +76,7 @@ function ProfileEditForm({
 
   const onSubmit = async (data: UserData) => {
     try {
+      console.log(data);
       await updateUser(data);
       toast("updated successfully");
     } catch (error) {

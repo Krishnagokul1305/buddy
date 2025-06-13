@@ -35,7 +35,7 @@ export interface UserData {
   id?: number;
   username: string;
   email: string;
-  password: string;
+  password?: string;
   name?: string | null;
   phone?: string | null;
   college_name?: string | null;

@@ -9,10 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Search, Sparkles } from "lucide-react";
+import { ArrowLeft, Search, Share2, Sparkles } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { notesService } from "@/services/notes.service";
 import { Note } from "@/types/note";
+import ReusableModal from "@/components/ReusableModal";
+import { UserSearchForm } from "@/components/UserSearchForm";
 
 export default async function SharedNotePage({
   params,
@@ -88,12 +90,34 @@ export default async function SharedNotePage({
             <ArrowLeft className="mr-1 h-4 w-4" />
             Back to notes
           </Link>
-          <Card className="shadow-lg">
-            <CardHeader className="border-b">
-              <CardTitle className="text-3xl font-bold">{note.title}</CardTitle>
-              <CardDescription className="text-base">
-                Shared on {formatDate(note.created_at + "")} • Public Note
-              </CardDescription>
+          <Card>
+            <CardHeader className="border-b p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <CardTitle className="text-2xl font-bold sm:text-3xl">
+                    {note.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm sm:text-base">
+                    Shared on {formatDate(note.created_at + "")} • Public Note
+                  </CardDescription>
+                </div>
+                <ReusableModal
+                  title="Share document"
+                  description="Search for users to share this document with."
+                  Trigger={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 shrink-0"
+                      aria-label="Share note"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  }
+                >
+                  <UserSearchForm />
+                </ReusableModal>
+              </div>
             </CardHeader>
             <CardContent className="pt-8">
               {renderMarkdown(note.content)}

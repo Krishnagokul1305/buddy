@@ -40,6 +40,7 @@ export async function signUpAction(userData: UserData) {
         email,
         password: password_hash,
         ...optionalFields,
+        year_of_study: optionalFields.year_of_study + "",
       },
     });
     console.log(user);
@@ -73,4 +74,17 @@ export async function updateNoteAction(
 ) {
   await notesService.updateNote(noteId, noteData);
   revalidatePath("/notes");
+}
+
+export async function changePasswordAction(
+  oldPassword: string,
+  newPassword: string
+) {
+  console.log(oldPassword, newPassword);
+  await userService.changePassword(oldPassword, newPassword);
+}
+
+export async function deleteAccountAction() {
+  await userService.deleteAccount();
+  await signOut();
 }

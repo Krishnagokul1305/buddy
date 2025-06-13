@@ -8,7 +8,6 @@ import { Tabs, TabsList } from "@/components/ui/tabs";
 export default function TabsWithLinks() {
   const pathname = usePathname();
 
-  // Determine which tab is active based on the current path
   const isMyNotesActive = pathname === "/notes" || pathname === "/";
   const isSharedNotesActive = pathname === "/notes/shared";
 
