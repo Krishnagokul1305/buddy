@@ -13,6 +13,8 @@ import { ArrowLeft, Search, Share2, Sparkles } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { notesService } from "@/services/notes.service";
 import { Note } from "@/types/note";
+import ReusableModal from "@/components/ReusableModal";
+import { UserSearchForm } from "@/components/UserSearchForm";
 
 export default async function SharedNotePage({
   params,
@@ -88,7 +90,7 @@ export default async function SharedNotePage({
             <ArrowLeft className="mr-1 h-4 w-4" />
             Back to notes
           </Link>
-          <Card className="shadow-lg">
+          <Card>
             <CardHeader className="border-b p-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="space-y-1">
@@ -99,14 +101,22 @@ export default async function SharedNotePage({
                     Shared on {formatDate(note.created_at + "")} • Public Note
                   </CardDescription>
                 </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-9 w-9 shrink-0"
-                  aria-label="Share note"
+                <ReusableModal
+                  title="Share document"
+                  description="Search for users to share this document with."
+                  Trigger={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 shrink-0"
+                      aria-label="Share note"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  }
                 >
-                  <Share2 className="h-4 w-4" />
-                </Button>
+                  <UserSearchForm />
+                </ReusableModal>
               </div>
             </CardHeader>
             <CardContent className="pt-8">

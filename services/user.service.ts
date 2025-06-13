@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import type { UserData } from "@/types/user";
 import prisma from "@/lib/prisma";
 import { saltAndHashPassword, verifyPassword } from "@/lib/utils";
+import { User } from "next-auth";
 
 export class UserService {
   async getCurrentUserProfile(): Promise<UserData | null> {
@@ -97,6 +98,34 @@ export class UserService {
       throw error;
     }
   }
+
+  async searchUsers(query: string) {
+  try {
+    const users:UserData[]|null = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    }) as UserData[];
+
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
 }
 
 export const userService = new UserService();
