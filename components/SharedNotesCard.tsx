@@ -4,26 +4,23 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { formatDate, truncateContent } from "@/lib/utils";
+import { Note } from "@/types/note";
+import { useRouter } from "next/navigation";
 
-function SharedNotesCard({
-  note,
-}: {
-  note: {
-    id: number;
-    title: string;
-    content: string;
-    created_at: string;
-  };
-}) {
+function SharedNotesCard({ note }: { note: Note }) {
+  const router = useRouter();
   return (
-    <Card key={note.id} className="overflow-hidden">
+    <Card
+      key={note.id}
+      className="overflow-hidden cursor-pointer"
+      onClick={() => router.push(`/notes/${note.share_slug}`)}
+    >
       <CardHeader>
         <div className="flex justify-between items-start">
           <CardTitle>{note.title}</CardTitle>
@@ -33,7 +30,7 @@ function SharedNotesCard({
           </Badge>
         </div>
         <CardDescription>
-          Shared on {formatDate(note.created_at)}
+          Shared on {formatDate(note.created_at + "")}
         </CardDescription>
       </CardHeader>
       <CardContent>

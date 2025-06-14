@@ -3,13 +3,13 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Github, Linkedin } from "lucide-react"; // Make sure to install lucide-react
+import { Github, Linkedin } from "lucide-react";
 
 function SocialMediaForm() {
   const { register } = useFormContext();
 
   return (
-    <div className="space-y-3 mt-3">
+    <div className="space-y-5 md:space-y-3 mt-5">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2 animate-slide-up stagger-1">
           <Label htmlFor="github_username" className="flex items-center gap-1">

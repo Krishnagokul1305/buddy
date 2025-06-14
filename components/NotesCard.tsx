@@ -26,7 +26,10 @@ function NotesCard({ note }: { note: Note }) {
 
   return (
     <Card className="overflow-hidden hover:cursor-pointer flex flex-col h-full group hover:shadow-lg transition-shadow cursor-pointer">
-      <CardHeader className="pb-3">
+      <CardHeader
+        className="pb-3"
+        onClick={() => router.push(`/notes/${note.share_slug}`)}
+      >
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{note.title}</CardTitle>
           <Badge
@@ -45,20 +48,34 @@ function NotesCard({ note }: { note: Note }) {
           Created on {formatDate(note.created_at + "")}
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-3 flex-grow">
+      <CardContent
+        className="pb-3 flex-grow"
+        onClick={() => router.push(`/notes/${note.share_slug}`)}
+      >
         <div className="text-muted-foreground">
           {truncateContent(note.content)}
         </div>
       </CardContent>
       <CardFooter className="pt-0 flex justify-between transition-opacity">
-        <Button variant="outline" size="sm" onClick={handleClick}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleClick();
+          }}
+        >
           <Edit className="h-4 w-4 mr-1" />
           Edit
         </Button>
         <ReusableDeleteModal
           onDelete={async () => await deleteNoteAction(note.id)}
           trigger={
-            <Button variant="destructive" size="sm">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Trash className="h-4 w-4 mr-1" />
               Delete
             </Button>

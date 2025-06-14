@@ -9,12 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Search, Share2, Sparkles } from "lucide-react";
+import { ArrowLeft, Search, Share2, Sparkles, Users } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { notesService } from "@/services/notes.service";
 import { Note } from "@/types/note";
 import ReusableModal from "@/components/ReusableModal";
 import { UserSearchForm } from "@/components/UserSearchForm";
+import SharedWithList from "@/components/SharedWithList";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { auth } from "@/lib/auth";
 
 export default async function SharedNotePage({
   params,
@@ -23,6 +27,7 @@ export default async function SharedNotePage({
 }) {
   const { slug } = await params;
   const note: Note | null = await notesService.getNoteBySlug(slug);
+  const session = await auth();
   if (!note)
     return (
       <div className="flex items-center justify-center min-h-[60vh] p-4">
@@ -115,7 +120,7 @@ export default async function SharedNotePage({
                     </Button>
                   }
                 >
-                  <UserSearchForm />
+                  <UserSearchForm noteId={note.id} />
                 </ReusableModal>
               </div>
             </CardHeader>
@@ -123,6 +128,47 @@ export default async function SharedNotePage({
               {renderMarkdown(note.content)}
             </CardContent>
           </Card>
+          {session?.user?.id == String(note.userId) && (
+            <div className="mt-4">
+              <Suspense
+                fallback={
+                  <Card>
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-5 w-5" />
+                        <Skeleton className="h-5 w-24" />
+                        <div className="ml-auto">
+                          <Skeleton className="h-5 w-16 rounded-full" />
+                        </div>
+                      </div>
+                      <Skeleton className="h-4 w-48 mt-1" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {Array.from({ length: 2 }).map((_, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                          >
+                            <div className="flex items-center gap-3">
+                              <Skeleton className="h-8 w-8 rounded-full" />
+                              <div className="flex flex-col gap-1">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-3 w-32" />
+                              </div>
+                            </div>
+                            <Skeleton className="h-9 w-16" />
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                }
+              >
+                <SharedWithList noteId={note.id} slug={note.share_slug} />
+              </Suspense>
+            </div>
+          )}
         </div>
       </main>
     </div>

@@ -7,7 +7,6 @@ import { Note } from "@/types/note";
 
 export default async function NotesPage() {
   const notes: Note[] | null = await notesService.getUserNotes();
-  console.log(notes);
   if (!notes || notes.length == 0) {
     return (
       <>
@@ -35,14 +34,4 @@ export default async function NotesPage() {
       ))}
     </div>
   );
-}
-
-{
-  /* <div className="text-center py-12">
-          <Share className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
-          <h2 className="text-xl font-medium mb-2">No shared notes</h2>
-          <p className="text-muted-foreground">
-            Shared notes from other users will appear here
-          </p>
-        </div> */
 }

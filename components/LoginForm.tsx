@@ -34,7 +34,6 @@ export default function LoginForm() {
         password,
       });
       if (res?.error) {
-        console.log(res);
         throw new Error(res.error);
       } else {
         toast.success("Logged in successfully");
@@ -42,7 +41,6 @@ export default function LoginForm() {
       }
     } catch (err: any) {
       toast("Something went wrong");
-      console.error(err);
     } finally {
       setIsLoading(false);
     }

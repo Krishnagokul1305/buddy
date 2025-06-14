@@ -25,7 +25,6 @@ export async function signInAction({
 
 export async function signUpAction(userData: UserData) {
   try {
-    console.log(userData);
     const { username, email, password, ...optionalFields } = userData;
 
     if (!username || !email || !password) {
@@ -43,7 +42,6 @@ export async function signUpAction(userData: UserData) {
         year_of_study: optionalFields.year_of_study + "",
       },
     });
-    console.log(user);
   } catch (error) {
     throw error;
   }
@@ -80,11 +78,28 @@ export async function changePasswordAction(
   oldPassword: string,
   newPassword: string
 ) {
-  console.log(oldPassword, newPassword);
   await userService.changePassword(oldPassword, newPassword);
 }
 
 export async function deleteAccountAction() {
   await userService.deleteAccount();
   await signOut();
+}
+
+export async function shareNoteAction(noteId: number, userId: number) {
+  await notesService.shareNoteWithUser(noteId, userId);
+  revalidatePath("/notes/shared");
+}
+
+export async function removeSharedUserAction(
+  noteId: number,
+  userId: number,
+  slug: string
+) {
+  await notesService.removeSharedUser(noteId, userId);
+  revalidatePath(`/notes/shared/${slug}`);
+}
+
+export async function getCurrentUserAction() {
+  return await userService.getCurrentUserProfile();
 }

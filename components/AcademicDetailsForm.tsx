@@ -18,7 +18,7 @@ function AcademicDetailsForm() {
   const year_of_study = watch("year_of_study");
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-5 md:space-y-3">
       <div className=" animate-slide-up stagger-1">
         <Label htmlFor="college_name">College Name</Label>
         <Input
