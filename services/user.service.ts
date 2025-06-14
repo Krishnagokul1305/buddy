@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import type { UserData } from "@/types/user";
 import prisma from "@/lib/prisma";
 import { saltAndHashPassword, verifyPassword } from "@/lib/utils";
-import { User } from "next-auth";
 
 export class UserService {
   async getCurrentUserProfile(): Promise<UserData | null> {
@@ -22,7 +21,6 @@ export class UserService {
       }
       return user;
     } catch (error) {
-      console.error("Get current user profile error:", error);
       return null;
     }
   }
@@ -42,7 +40,7 @@ export class UserService {
       });
       return true;
     } catch (error) {
-      console.log(error);
+      return null;
     }
   }
 
@@ -59,7 +57,6 @@ export class UserService {
       });
       return true;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -94,38 +91,54 @@ export class UserService {
       });
       return true;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
 
   async searchUsers(query: string) {
-  try {
-    const users:UserData[]|null = await prisma.user.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query,
-              mode: "insensitive",
+    try {
+      const session = await auth();
+      if (!session?.user?.email) return [];
+      const users = await prisma.user.findMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  email: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              ],
             },
-          },
-          {
-            email: {
-              contains: query,
-              mode: "insensitive",
+            {
+              email: {
+                not: session.user.email,
+              },
             },
-          },
-        ],
-      },
-    }) as UserData[];
+          ],
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          name: true,
+          profile_picture: true,
+        },
+      });
 
-    return users;
-  } catch (error) {
-    throw error;
+      return users;
+    } catch (error) {
+      throw error;
+    }
   }
-}
-
 }
 
 export const userService = new UserService();

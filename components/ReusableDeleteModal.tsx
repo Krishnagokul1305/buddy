@@ -50,7 +50,6 @@ const ReusableDeleteModal: ForwardRefRenderFunction<
       toast("Item deleted successfully");
       setOpen(false);
     } catch (error) {
-      console.error("Error deleting item:", error);
       toast("Failed to delete item");
     } finally {
       setIsLoading(false);
@@ -70,13 +69,19 @@ const ReusableDeleteModal: ForwardRefRenderFunction<
         <AlertDialogFooter>
           <AlertDialogCancel
             disabled={isLoading}
-            onClick={() => setOpen(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(false);
+            }}
           >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-white"
-            onClick={handleDelete}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete();
+            }}
             disabled={isLoading}
           >
             {isLoading ? (

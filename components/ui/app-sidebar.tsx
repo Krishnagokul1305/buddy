@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation"; // or "next/navigation" if using App Router
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Settings, BookOpen, Home, Folder, User, File } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -18,38 +18,36 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { userService } from "@/services/user.service";
+import { UserData } from "@/types/user";
+import { getCurrentUserAction } from "@/lib/actions";
 
 const navigationItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    url: "/home",
-  },
-  {
-    title: "Notes",
-    icon: Folder,
-    url: "/notes",
-  },
-  {
-    title: "Files",
-    icon: File,
-    url: "/files",
-  },
-  {
-    title: "Profile",
-    icon: User,
-    url: "/profile",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    url: "/settings",
-  },
+  { title: "Dashboard", icon: Home, url: "/home" },
+  { title: "Notes", icon: Folder, url: "/notes" },
+  { title: "Files", icon: File, url: "/files" },
+  { title: "Profile", icon: User, url: "/profile" },
+  { title: "Settings", icon: Settings, url: "/settings" },
 ];
 
 export function AppSidebar() {
   const path = usePathname();
   const currentPath = path;
+  const [user, setUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const currentUser: UserData | null = await getCurrentUserAction();
+      setUser(currentUser);
+    }
+    fetchUser();
+  }, []);
+
+  const initials = (user?.name || "U")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 
   return (
     <Sidebar className="border-r">
@@ -111,16 +109,18 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" className="hover:bg-transparent">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src="https://img.freepik.com/free-photo/young-man-with-beard-round-glasses_273609-6203.jpg?semt=ais_hybrid&w=740"
-                  alt="Avatar"
+                  src={user?.profile_picture || "/placeholder.svg"}
+                  alt={user?.name || "User"}
                 />
                 <AvatarFallback className="rounded-lg bg-blue-600">
-                  TT
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Tran Mau Tri Tam</span>
-                <span className="truncate text-xs">tam@ui8.net</span>
+                <span className="truncate font-medium">
+                  {user?.name || "Loading..."}
+                </span>
+                <span className="truncate text-xs">{user?.email || "..."}</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="flex items-center justify-center w-5 h-5 bg-blue-500 rounded-full">

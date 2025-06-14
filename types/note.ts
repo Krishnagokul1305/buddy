@@ -1,3 +1,5 @@
+import { UserBasic } from "./user";
+
 export interface Note {
   id: number;
   title: string;
@@ -7,6 +9,7 @@ export interface Note {
   share_slug: string;
   created_at: Date;
   updated_at: Date;
+  sharedWithUsers?: UserBasic[];
 }
 
 export interface NotesFormValues {

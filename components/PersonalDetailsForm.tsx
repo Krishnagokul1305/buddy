@@ -9,7 +9,7 @@ function PersonalDetailsForm() {
   const { register } = useFormContext();
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-5 md:space-y-3">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className=" animate-slide-up stagger-1">
           <Label htmlFor="username">Username</Label>

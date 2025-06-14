@@ -31,18 +31,19 @@ model User {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  Note Note[]
+  Note              Note[]           // Notes authored by this user
+  sharedNotes       Note[]           @relation("SharedNotes")
 }
 
 model Note {
-  id         Int      @id @default(autoincrement())
-  title      String
-  content    String
-  is_public  Boolean  @default(false)
-  share_slug String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
+  id                Int      @id @default(autoincrement())
+  title             String
+  content           String
+  is_public         Boolean  @default(false)
+  share_slug        String   @unique
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  userId            Int
+  user              User     @relation(fields: [userId], references: [id])
+  sharedWithUsers   User[]   @relation("SharedNotes")
 }

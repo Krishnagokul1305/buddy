@@ -2,18 +2,17 @@ import { auth } from "@/lib/auth";
 import prisma from "../lib/prisma";
 import { Note, NotesFormValues } from "@/types/note";
 import { generateSlug } from "@/lib/utils";
+import { UserData } from "@/types/user";
 
 class NotesService {
   async getUserNotes(): Promise<Note[] | null> {
     try {
       const session = await auth();
       if (!session?.user) {
-        console.warn("No user session found.");
         return null;
       }
 
       if (!session.user.id) {
-        console.error("Session user ID is missing.");
         return null;
       }
 
@@ -24,7 +23,6 @@ class NotesService {
       });
       return notes;
     } catch (error) {
-      console.error("Error fetching user notes:", error);
       return null;
     }
   }
@@ -46,15 +44,13 @@ class NotesService {
     try {
       const session = await auth();
       if (!session?.user) {
-        console.warn("No user session found.");
         return null;
       }
 
       if (!session.user.id) {
-        console.error("Session user ID is missing.");
         return null;
       }
-      await prisma.note.create({
+      const data = await prisma.note.create({
         data: {
           ...noteData,
           userId: +session.user.id,
@@ -70,12 +66,10 @@ class NotesService {
     try {
       const session = await auth();
       if (!session?.user) {
-        console.warn("No user session found.");
         return null;
       }
 
       if (!session.user.id) {
-        console.error("Session user ID is missing.");
         return null;
       }
 
@@ -96,12 +90,10 @@ class NotesService {
     try {
       const session = await auth();
       if (!session?.user) {
-        console.warn("No user session found.");
         return null;
       }
 
       if (!session.user.id) {
-        console.error("Session user ID is missing.");
         return null;
       }
       await prisma.note.delete({
@@ -123,8 +115,91 @@ class NotesService {
       });
       return note;
     } catch (error) {
-      console.error("Error fetching note by slug:", error);
       return null;
+    }
+  }
+
+  async getNotesSharedToUser(): Promise<Note[] | null> {
+    try {
+      const session = await auth();
+      if (!session?.user) {
+        return null;
+      }
+
+      if (!session.user.id) {
+        return null;
+      }
+
+      const notes = await prisma.note.findMany({
+        where: {
+          sharedWithUsers: {
+            some: {
+              id: +session.user.id,
+            },
+          },
+        },
+      });
+
+      return notes;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async shareNoteWithUser(noteId: number, userId: number) {
+    try {
+      const updatedNote = await prisma.note.update({
+        where: { id: noteId },
+        data: {
+          sharedWithUsers: {
+            connect: { id: userId },
+          },
+        },
+        include: {
+          sharedWithUsers: true,
+        },
+      });
+
+      return updatedNote;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSharedUsers(noteId: number): Promise<UserData[] | null> {
+    try {
+      const note = await prisma.note.findUnique({
+        where: { id: noteId },
+        select: {
+          sharedWithUsers: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return note?.sharedWithUsers ?? null;
+    } catch (error) {
+      return null;
+    }
+  }
+  async removeSharedUser(noteId: number, userId: number): Promise<boolean> {
+    try {
+      await prisma.note.update({
+        where: { id: noteId },
+        data: {
+          sharedWithUsers: {
+            disconnect: { id: userId },
+          },
+        },
+      });
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }

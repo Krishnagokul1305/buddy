@@ -59,7 +59,6 @@ function RegisterForm() {
       toast("Registration successful!");
       router.push("/login");
     } catch (err) {
-      console.error(err);
       toast("Registration failed!");
     }
   };
@@ -87,7 +86,11 @@ function RegisterForm() {
               </div>
             )}
 
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="space-y-3"
+            >
               <TabsList className="grid grid-cols-3">
                 <TabsTrigger value="personal">
                   <User className="h-4 w-4" />
