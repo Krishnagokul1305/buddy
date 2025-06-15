@@ -54,7 +54,7 @@ export default function CloudPage() {
 
   return (
     <div className="min-h-screen p-6 space-y-5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-1 gap-4">
         <div className="left-sidebar space-y-7">
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
@@ -64,7 +64,7 @@ export default function CloudPage() {
                 <ChevronRight className="h-4 w-4 ml-1" />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
               {categoryData.map((category, index) => (
                 <Card key={index} className={`${category.bgColor} border-0`}>
                   <CardContent className="p-4">
@@ -85,7 +85,7 @@ export default function CloudPage() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
