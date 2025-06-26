@@ -26,6 +26,7 @@ export default async function SharedNotePage({
   params: { slug: string };
 }) {
   const { slug } = await params;
+  console.log(slug);
   const note: Note | null = await notesService.getNoteBySlug(slug);
   const session = await auth();
   if (!note)
@@ -103,32 +104,34 @@ export default async function SharedNotePage({
                     {note.title}
                   </CardTitle>
                   <CardDescription className="text-sm sm:text-base">
-                    Shared on {formatDate(note.created_at + "")} • Public Note
+                    Shared on {formatDate(note.createdAt + "")} • Public Note
                   </CardDescription>
                 </div>
-                <ReusableModal
-                  title="Share document"
-                  description="Search for users to share this document with."
-                  Trigger={
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-9 w-9 shrink-0"
-                      aria-label="Share note"
-                    >
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  }
-                >
-                  <UserSearchForm noteId={note.id} />
-                </ReusableModal>
+                {session?.user?.id == String(note.authorId) && (
+                  <ReusableModal
+                    title="Share document"
+                    description="Search for users to share this document with."
+                    Trigger={
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9 shrink-0"
+                        aria-label="Share note"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    }
+                  >
+                    <UserSearchForm noteId={note.id} />
+                  </ReusableModal>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-8">
               {renderMarkdown(note.content)}
             </CardContent>
           </Card>
-          {session?.user?.id == String(note.userId) && (
+          {session?.user?.id == String(note.authorId) && (
             <div className="mt-4">
               <Suspense
                 fallback={
@@ -165,7 +168,7 @@ export default async function SharedNotePage({
                   </Card>
                 }
               >
-                <SharedWithList noteId={note.id} slug={note.share_slug} />
+                <SharedWithList noteId={note.id} slug={note.shareSlug} />
               </Suspense>
             </div>
           )}

@@ -1,58 +1,38 @@
 "use client";
 
-import { useForm, FormProvider } from "react-hook-form";
-import type { UserData } from "@/types/user";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import {
   Card,
   CardHeader,
-  CardContent,
-  CardFooter,
   CardTitle,
   CardDescription,
+  CardContent,
+  CardFooter,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, GraduationCap, Github, User, UserPlus } from "lucide-react";
-import Link from "next/link";
-import PersonalDetailsForm from "./PersonalDetailsForm";
-import AcademicDetailsForm from "./AcademicDetailsForm";
-import SocialMediaForm from "./SocialMediaForm";
-import { signUpAction } from "@/lib/actions";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { ArrowLeft, UserPlus } from "lucide-react";
+import Link from "next/link";
+import { UserData } from "@/types/user";
+import { signUpAction } from "@/lib/actions";
 
-function RegisterForm() {
-  const methods = useForm<UserData>({
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      name: "",
-      phone: "",
-      bio: "",
-      college_name: "",
-      year_of_study: 0,
-      degree: "",
-      branch: "",
-      github_username: "",
-      leetcode_username: "",
-      linkedin_username: "",
-      resume_link: "",
-      profile_picture: "",
-    },
-  });
-
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
-
+export default function RegisterForm() {
   const router = useRouter();
 
-  const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("personal");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<UserData>();
 
+  // watch password for confirm validation
+  const password = watch("password", "");
+
+  // your given onSubmit function
   const onSubmit = async (data: UserData) => {
     try {
       await signUpAction(data);
@@ -64,102 +44,157 @@ function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-2xl">
-      <CardHeader className="space-y-1 text-center">
-        <div className="flex justify-center">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+    <Card className="w-full max-w-md animate-scale-in card-hover">
+      <CardHeader className="space-y-1">
+        <div className="w-full flex justify-center mb-2">
+          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center animate-bounce-in">
             <UserPlus className="h-6 w-6 text-primary" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
-        <CardDescription>
-          Join PlacementBuddy to start your journey
+        <CardTitle className="text-2xl font-bold text-center">
+          Register
+        </CardTitle>
+        <CardDescription className="text-center">
+          Create your account to get started
         </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {error && (
-              <div className="p-3 mb-4 text-sm text-white bg-destructive rounded">
-                {error}
-              </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
+          <div className="space-y-2 animate-slide-up stagger-1">
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="yourusername"
+              {...register("username", { required: "Username is required" })}
+              aria-invalid={errors.username ? "true" : "false"}
+              className="form-field-animation"
+            />
+            {errors.username && (
+              <p role="alert" className="text-sm text-red-600 mt-1">
+                {errors.username.message}
+              </p>
             )}
+          </div>
 
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="space-y-3"
-            >
-              <TabsList className="grid grid-cols-3">
-                <TabsTrigger value="personal">
-                  <User className="h-4 w-4" />
-                  Personal
-                </TabsTrigger>
-                <TabsTrigger value="academic">
-                  <GraduationCap className="h-4 w-4" />
-                  Academic
-                </TabsTrigger>
-                <TabsTrigger value="social">
-                  <Github className="h-4 w-4" />
-                  Social
-                </TabsTrigger>
-              </TabsList>
+          <div className="space-y-2 animate-slide-up stagger-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                  message: "Invalid email address",
+                },
+              })}
+              aria-invalid={errors.email ? "true" : "false"}
+              className="form-field-animation"
+            />
+            {errors.email && (
+              <p role="alert" className="text-sm text-red-600 mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-              <TabsContent value="personal">
-                <PersonalDetailsForm />
-                <div className="flex justify-end mt-3">
-                  <Button
-                    type="button"
-                    onClick={() => setActiveTab("academic")}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </TabsContent>
+          <div className="space-y-2 animate-slide-up stagger-3">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 6, message: "Minimum 6 characters" },
+              })}
+              aria-invalid={errors.password ? "true" : "false"}
+              className="form-field-animation"
+            />
+            {errors.password && (
+              <p role="alert" className="text-sm text-red-600 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
 
-              <TabsContent value="academic">
-                <AcademicDetailsForm />
-                <div className="flex justify-between mt-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setActiveTab("personal")}
-                  >
-                    Previous
-                  </Button>
-                  <Button onClick={() => setActiveTab("social")}>Next</Button>
-                </div>
-              </TabsContent>
+          <div className="space-y-2 animate-slide-up stagger-4">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+              aria-invalid={errors.confirmPassword ? "true" : "false"}
+              className="form-field-animation"
+            />
+            {errors.confirmPassword && (
+              <p role="alert" className="text-sm text-red-600 mt-1">
+                {errors?.confirmPassword?.message}
+              </p>
+            )}
+          </div>
 
-              <TabsContent value="social">
-                <SocialMediaForm />
-                <div className="flex justify-between mt-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setActiveTab("academic")}
-                  >
-                    Previous
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Registering..." : "Register"}
-                  </Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </form>
-        </FormProvider>
+          <Button
+            type="submit"
+            className="w-full animate-slide-up stagger-5 btn-hover-effect"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Registering...
+              </>
+            ) : (
+              "Register"
+            )}
+          </Button>
+        </form>
       </CardContent>
 
       <CardFooter className="flex flex-col space-y-4">
-        <div className="text-sm text-center text-muted-foreground">
+        <div className="text-sm text-center text-muted-foreground animate-fade-in stagger-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link
+            href="/login"
+            className="text-primary hover:underline font-medium"
+          >
             Login
           </Link>
         </div>
         <Link
           href="/"
-          className="flex items-center text-sm text-muted-foreground hover:text-foreground"
+          className="flex items-center text-sm text-muted-foreground hover:text-foreground animate-fade-in stagger-7"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           Back to home
@@ -168,5 +203,3 @@ function RegisterForm() {
     </Card>
   );
 }
-
-export default RegisterForm;

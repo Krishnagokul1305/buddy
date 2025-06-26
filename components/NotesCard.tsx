@@ -28,29 +28,29 @@ function NotesCard({ note }: { note: Note }) {
     <Card className="overflow-hidden hover:cursor-pointer flex flex-col h-full group hover:shadow-lg transition-shadow cursor-pointer">
       <CardHeader
         className="pb-3"
-        onClick={() => router.push(`/notes/${note.share_slug}`)}
+        onClick={() => router.push(`/notes/${note.shareSlug}`)}
       >
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{note.title}</CardTitle>
           <Badge
-            variant={note.is_public ? "default" : "outline"}
+            variant={note.isPublic ? "default" : "outline"}
             className="ml-2"
           >
-            {note.is_public ? (
+            {note.isPublic ? (
               <Eye className="h-3 w-3 mr-1" />
             ) : (
               <Lock className="h-3 w-3 mr-1" />
             )}
-            {note.is_public ? "Public" : "Private"}
+            {note.isPublic ? "Public" : "Private"}
           </Badge>
         </div>
         <CardDescription>
-          Created on {formatDate(note.created_at + "")}
+          Created on {formatDate(note.createdAt + "")}
         </CardDescription>
       </CardHeader>
       <CardContent
         className="pb-3 flex-grow"
-        onClick={() => router.push(`/notes/${note.share_slug}`)}
+        onClick={() => router.push(`/notes/${note.shareSlug}`)}
       >
         <div className="text-muted-foreground">
           {truncateContent(note.content)}

@@ -9,41 +9,47 @@ datasource db {
 }
 
 model User {
-  id                Int     @id @default(autoincrement())
-  username          String  @unique
-  email             String  @unique
-  password          String
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  password String
 
-  name              String?
-  phone             String?
-  college_name      String?
-  year_of_study     String?
-  degree            String?
-  branch            String?
-  github_username   String?
-  leetcode_username String?
-  linkedin_username String?
-  resume_link       String?
-  profile_picture   String?
-  bio               String?
-  is_verified       Boolean @default(false)
-
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  Note              Note[]           // Notes authored by this user
-  sharedNotes       Note[]           @relation("SharedNotes")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  NoteShare NoteShare[]
+  Note Note[]
 }
 
 model Note {
-  id                Int      @id @default(autoincrement())
-  title             String
-  content           String
-  is_public         Boolean  @default(false)
-  share_slug        String   @unique
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
-  userId            Int
-  user              User     @relation(fields: [userId], references: [id])
-  sharedWithUsers   User[]   @relation("SharedNotes")
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  isPublic   Boolean  @default(false)
+  shareSlug  String  @unique
+  authorId   Int
+  author     User     @relation(fields: [authorId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([authorId])
+  NoteShare NoteShare[]
+}
+
+model NoteShare {
+  id         Int      @id @default(autoincrement())
+  noteId     Int
+  note       Note     @relation(fields: [noteId], references: [id])
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  access     AccessLevel
+  createdAt  DateTime @default(now())
+  @@unique([noteId, userId])
+  @@index([userId])
+}
+
+enum AccessLevel {
+  VIEW
+  EDIT
+  DELETE
 }

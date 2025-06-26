@@ -15,19 +15,16 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { userService } from "@/services/user.service";
 import { UserData } from "@/types/user";
 import { getCurrentUserAction } from "@/lib/actions";
 
 const navigationItems = [
   { title: "Dashboard", icon: Home, url: "/home" },
   { title: "Notes", icon: Folder, url: "/notes" },
-  { title: "Files", icon: File, url: "/files" },
   { title: "Profile", icon: User, url: "/profile" },
-  { title: "Settings", icon: Settings, url: "/settings" },
 ];
 
 export function AppSidebar() {
@@ -43,7 +40,7 @@ export function AppSidebar() {
     fetchUser();
   }, []);
 
-  const initials = (user?.name || "U")
+  const initials = (user?.username || "U")
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -107,36 +104,46 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="hover:bg-transparent">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={user?.profile_picture || "/placeholder.svg"}
-                  alt={user?.name || "User"}
-                />
-                <AvatarFallback className="rounded-lg bg-blue-600">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {user?.name || "Loading..."}
-                </span>
-                <span className="truncate text-xs">{user?.email || "..."}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="flex items-center justify-center w-5 h-5 bg-blue-500 rounded-full">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
+              {user ? (
+                <>
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarFallback className="rounded-lg bg-blue-600">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">
+                      {user.username}
+                    </span>
+                    <span className="truncate text-xs">{user.email}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-center w-5 h-5 bg-blue-500 rounded-full">
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // Skeleton Loader
+                <>
+                  <div className="h-8 w-8 rounded-lg bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-1 ml-2">
+                    <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+                    <div className="h-3 w-36 rounded bg-muted animate-pulse" />
+                  </div>
+                  <div className="w-5 h-5 rounded-full bg-muted animate-pulse" />
+                </>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

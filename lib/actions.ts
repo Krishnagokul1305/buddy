@@ -25,7 +25,7 @@ export async function signInAction({
 
 export async function signUpAction(userData: UserData) {
   try {
-    const { username, email, password, ...optionalFields } = userData;
+    const { username, email, password } = userData;
 
     if (!username || !email || !password) {
       throw new Error("Username, email, and password are required.");
@@ -33,13 +33,11 @@ export async function signUpAction(userData: UserData) {
 
     const password_hash = await saltAndHashPassword(password);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         email,
         password: password_hash,
-        ...optionalFields,
-        year_of_study: optionalFields.year_of_study + "",
       },
     });
   } catch (error) {
@@ -49,11 +47,6 @@ export async function signUpAction(userData: UserData) {
 
 export async function signOutAction() {
   await signOut();
-}
-
-export async function updateUser(userData: UserData) {
-  await userService.updateUserProfile(userData);
-  revalidatePath("/profile");
 }
 
 export async function createNoteAction(noteData: NotesFormValues) {

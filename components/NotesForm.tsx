@@ -16,16 +16,10 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Eye, Save } from "lucide-react";
-import { Note } from "@/types/note";
+import { Note, NotesFormValues } from "@/types/note";
 import { createNoteAction, updateNoteAction } from "@/lib/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-type FormValues = {
-  title: string;
-  content: string;
-  is_public: boolean;
-};
 
 function NotesForm({
   note,
@@ -40,10 +34,10 @@ function NotesForm({
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm<NotesFormValues>({
     defaultValues: {
       content: note?.content || "",
-      is_public: note?.is_public || false,
+      isPublic: note?.isPublic || false,
       title: note?.title || "",
     },
   });
@@ -51,9 +45,9 @@ function NotesForm({
   const [activeTab, setActiveTab] = useState("write");
   const content = watch("content");
   const router = useRouter();
-  const isPublic = watch("is_public");
+  const isPublic = watch("isPublic");
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: NotesFormValues) {
     try {
       if (!isEdit) {
         await createNoteAction(data);
@@ -163,7 +157,7 @@ function NotesForm({
             id="is_public"
             checked={isPublic}
             onCheckedChange={(checked) =>
-              setValue("is_public", checked, { shouldDirty: true })
+              setValue("isPublic", checked, { shouldDirty: true })
             }
           />
           <Label htmlFor="is_public">Make this note public</Label>

@@ -18,7 +18,7 @@ class NotesService {
 
       const notes = await prisma.note.findMany({
         where: {
-          userId: Number(session.user.id),
+          authorId: Number(session.user.id),
         },
       });
       return notes;
@@ -53,11 +53,13 @@ class NotesService {
       const data = await prisma.note.create({
         data: {
           ...noteData,
-          userId: +session.user.id,
-          share_slug: generateSlug(noteData.title),
+          authorId: +session.user.id,
+          shareSlug: generateSlug(noteData.title),
         },
       });
+      console.log(data);
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
@@ -110,7 +112,7 @@ class NotesService {
     try {
       const note = await prisma.note.findUnique({
         where: {
-          share_slug: slug,
+          shareSlug: slug,
         },
       });
       return note;
