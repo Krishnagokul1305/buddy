@@ -16,7 +16,7 @@ import {
 
 function DashBoardHeader() {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean).slice(0, 2);
+  const segments = pathname.split("/").filter(Boolean).slice(0, 1);
 
   return (
     <header className="flex sticky top-0 z-30 bg-background/70 backdrop-blur-md justify-between h-16 shrink-0 items-center gap-2 border-b px-4">

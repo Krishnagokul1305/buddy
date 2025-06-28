@@ -12,14 +12,20 @@ import { Badge } from "./ui/badge";
 import { Edit, Eye, Lock, Trash } from "lucide-react";
 import { Button } from "./ui/button";
 import { formatDate, truncateContent } from "@/lib/utils";
-import { Note } from "@/types/note";
+import { Note, NoteWithAccess } from "@/types/note";
 import { useRouter } from "next/navigation";
 import ReusableDeleteModal from "./ReusableDeleteModal";
 import { deleteNoteAction } from "@/lib/actions";
+import { SimpleContentRenderer } from "./simple-content-renderer";
 
-function NotesCard({ note }: { note: Note }) {
+function NotesCard({
+  note,
+  userId,
+}: {
+  note: Note | NoteWithAccess;
+  userId: number;
+}) {
   const router = useRouter();
-
   const handleClick = () => {
     router.push(`/notes/edit/${note.id}`);
   };
@@ -53,34 +59,42 @@ function NotesCard({ note }: { note: Note }) {
         onClick={() => router.push(`/notes/${note.shareSlug}`)}
       >
         <div className="text-muted-foreground">
-          {truncateContent(note.content)}
+          <SimpleContentRenderer content={note.content} maxLength={100} />
         </div>
       </CardContent>
       <CardFooter className="pt-0 flex justify-between transition-opacity">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleClick();
-          }}
-        >
-          <Edit className="h-4 w-4 mr-1" />
-          Edit
-        </Button>
-        <ReusableDeleteModal
-          onDelete={async () => await deleteNoteAction(note.id)}
-          trigger={
+        {(userId === +note.authorId ||
+          (note as NoteWithAccess)?.access === "EDIT") && (
+          <>
             <Button
-              variant="destructive"
+              variant="outline"
               size="sm"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick();
+              }}
             >
-              <Trash className="h-4 w-4 mr-1" />
-              Delete
+              <Edit className="h-4 w-4 mr-1" />
+              Edit
             </Button>
-          }
-        />
+
+            {userId === +note.authorId && (
+              <ReusableDeleteModal
+                onDelete={async () => await deleteNoteAction(note.id)}
+                trigger={
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Trash className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+                }
+              />
+            )}
+          </>
+        )}
       </CardFooter>
     </Card>
   );

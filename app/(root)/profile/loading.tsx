@@ -12,16 +12,8 @@ function Loading() {
               <Skeleton className="h-4 w-24" />
             </div>
           </div>
-
-          <div className="grid w-full grid-cols-4 gap-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-
           <div className="mt-6">
-            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-80 w-full" />
           </div>
         </div>
       </main>

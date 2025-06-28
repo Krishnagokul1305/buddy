@@ -1,24 +1,21 @@
 import { auth } from "@/lib/auth";
 import prisma from "../lib/prisma";
-import { Note, NotesFormValues } from "@/types/note";
+import {
+  Access,
+  AccessLevel,
+  Note,
+  NotesFormValues,
+  NoteWithAccess,
+} from "@/types/note";
 import { generateSlug } from "@/lib/utils";
 import { UserData } from "@/types/user";
 
 class NotesService {
-  async getUserNotes(): Promise<Note[] | null> {
+  async getUserNotes(userId: number): Promise<Note[] | null> {
     try {
-      const session = await auth();
-      if (!session?.user) {
-        return null;
-      }
-
-      if (!session.user.id) {
-        return null;
-      }
-
       const notes = await prisma.note.findMany({
         where: {
-          authorId: Number(session.user.id),
+          authorId: userId,
         },
       });
       return notes;
@@ -108,99 +105,138 @@ class NotesService {
     }
   }
 
-  async getNoteBySlug(slug: string): Promise<Note | null> {
+  async getNoteBySlug(slug: string, userId: number): Promise<Note | null> {
     try {
       const note = await prisma.note.findUnique({
         where: {
           shareSlug: slug,
         },
-      });
-      return note;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async getNotesSharedToUser(): Promise<Note[] | null> {
-    try {
-      const session = await auth();
-      if (!session?.user) {
-        return null;
-      }
-
-      if (!session.user.id) {
-        return null;
-      }
-
-      const notes = await prisma.note.findMany({
-        where: {
-          sharedWithUsers: {
-            some: {
-              id: +session.user.id,
+        include: {
+          NoteShare: {
+            where: {
+              userId,
             },
           },
         },
       });
 
-      return notes;
+      if (!note) return null;
+
+      const isAuthor = note.authorId === userId;
+      const isPublic = note.isPublic;
+      const hasAccess = note.NoteShare.length > 0;
+
+      if (isAuthor || isPublic || hasAccess) {
+        return note;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error fetching note:", error);
+      return null;
+    }
+  }
+
+  async getNotesSharedToUser(userId: number): Promise<NoteWithAccess[] | null> {
+    try {
+      const notes = await prisma.note.findMany({
+        where: {
+          NoteShare: {
+            some: {
+              userId,
+            },
+          },
+        },
+        include: {
+          NoteShare: {
+            where: {
+              userId,
+            },
+            select: {
+              access: true,
+            },
+          },
+        },
+      });
+      const mappedNotes = notes.map((note) => ({
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        shareSlug: note.shareSlug,
+        isPublic: note.isPublic,
+        authorId: note.authorId,
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt,
+        access: note.NoteShare[0]?.access ?? AccessLevel.VIEW,
+      }));
+
+      return mappedNotes;
     } catch (error) {
       return null;
     }
   }
 
-  async shareNoteWithUser(noteId: number, userId: number) {
+  async shareNoteWithUser(noteId: number, userId: number, access: Access) {
     try {
-      const updatedNote = await prisma.note.update({
-        where: { id: noteId },
-        data: {
-          sharedWithUsers: {
-            connect: { id: userId },
+      const noteShare = await prisma.noteShare.upsert({
+        where: {
+          noteId_userId: {
+            noteId,
+            userId,
           },
         },
-        include: {
-          sharedWithUsers: true,
+        update: {
+          access,
+        },
+        create: {
+          noteId,
+          userId,
+          access,
         },
       });
 
-      return updatedNote;
+      return noteShare;
     } catch (error) {
+      console.error("Error sharing note:", error);
       throw error;
     }
   }
 
   async getSharedUsers(noteId: number): Promise<UserData[] | null> {
     try {
-      const note = await prisma.note.findUnique({
-        where: { id: noteId },
-        select: {
-          sharedWithUsers: {
+      const shares = await prisma.noteShare.findMany({
+        where: { noteId },
+        include: {
+          user: {
             select: {
               id: true,
-              username: true,
               email: true,
-              name: true,
+              username: true,
             },
           },
         },
       });
 
-      return note?.sharedWithUsers ?? null;
+      return shares.map((share) => share.user);
     } catch (error) {
+      console.error("Error fetching shared users:", error);
       return null;
     }
   }
+
   async removeSharedUser(noteId: number, userId: number): Promise<boolean> {
     try {
-      await prisma.note.update({
-        where: { id: noteId },
-        data: {
-          sharedWithUsers: {
-            disconnect: { id: userId },
+      await prisma.noteShare.delete({
+        where: {
+          noteId_userId: {
+            noteId,
+            userId,
           },
         },
       });
       return true;
     } catch (error) {
+      console.error("Error removing shared user:", error);
       return false;
     }
   }

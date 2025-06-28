@@ -19,6 +19,8 @@ import SharedWithList from "@/components/SharedWithList";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { auth } from "@/lib/auth";
+import { SimpleContentRenderer } from "@/components/simple-content-renderer";
+import { ContentViewer } from "@/components/ContentViewer";
 
 export default async function SharedNotePage({
   params,
@@ -26,9 +28,11 @@ export default async function SharedNotePage({
   params: { slug: string };
 }) {
   const { slug } = await params;
-  console.log(slug);
-  const note: Note | null = await notesService.getNoteBySlug(slug);
   const session = await auth();
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  if (!userId) return null;
+  const note: Note | null = await notesService.getNoteBySlug(slug, userId);
+  const serialized = JSON.parse(note?.content ?? "{}");
   if (!note)
     return (
       <div className="flex items-center justify-center min-h-[60vh] p-4">
@@ -77,14 +81,6 @@ export default async function SharedNotePage({
       </div>
     );
 
-  const renderMarkdown = (content: string) => {
-    return (
-      <div className="prose prose-slate dark:prose-invert max-w-none">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-      </div>
-    );
-  };
-
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 container py-8">
@@ -128,7 +124,7 @@ export default async function SharedNotePage({
               </div>
             </CardHeader>
             <CardContent className="pt-8">
-              {renderMarkdown(note.content)}
+              <ContentViewer value={serialized} />
             </CardContent>
           </Card>
           {session?.user?.id == String(note.authorId) && (

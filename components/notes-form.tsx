@@ -1,29 +1,50 @@
-"use client";
-import { useForm, Controller } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import Link from "next/link";
-import { Save } from "lucide-react";
-import type { Note, NotesFormValues } from "@/types/note";
-import { createNoteAction, updateNoteAction } from "@/lib/actions";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import EditorComponent from "./EditorComponent";
+"use client"
+import { useForm, Controller } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
+import Link from "next/link"
+import { Save } from "lucide-react"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import EditorComponent from "./editor-component"
+
+interface Note {
+  id: string
+  title: string
+  content: string
+  isPublic: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+interface NotesFormValues {
+  title: string
+  content: string
+  isPublic: boolean
+}
+
+// Mock actions - replace with your actual actions
+async function createNoteAction(data: NotesFormValues) {
+  console.log("Creating note with data:", data)
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  return { success: true }
+}
+
+async function updateNoteAction(id: string, data: NotesFormValues) {
+  console.log("Updating note with id:", id, "and data:", data)
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  return { success: true }
+}
 
 function NotesForm({
   note,
   isEdit = false,
 }: {
-  note?: Note | null;
-  isEdit?: boolean;
+  note?: Note | null
+  isEdit?: boolean
 }) {
   const {
     register,
@@ -38,33 +59,36 @@ function NotesForm({
       isPublic: note?.isPublic || false,
       title: note?.title || "",
     },
-  });
+  })
 
-  const router = useRouter();
-  const isPublic = watch("isPublic");
+  const router = useRouter()
+  const isPublic = watch("isPublic")
 
   async function onSubmit(data: NotesFormValues) {
     try {
-      console.log("Submitting form with data:", data);
+      console.log("Submitting form with data:", data)
 
       if (!isEdit) {
-        await createNoteAction(data);
-        toast("Created new note");
+        await createNoteAction(data)
+        toast("Created new note")
       }
       if (isEdit && note) {
-        await updateNoteAction(note?.id, data);
-        toast("Updated Successfully");
+        await updateNoteAction(note?.id, data)
+        toast("Updated Successfully")
       }
-      router.push("/notes");
+      router.push("/notes")
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast("Error creating note");
+      console.error("Error submitting form:", error)
+      toast("Error creating note")
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <CardContent className="space-y-4 mt-5">
+      <CardHeader>
+        <CardDescription>Create a new note with rich text editor</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <div className="space-y-2 animate-slide-up stagger-1">
           <Label htmlFor="title">Title</Label>
           <Input
@@ -73,17 +97,13 @@ function NotesForm({
             {...register("title", { required: "Title is required" })}
             className="form-field-animation"
           />
-          {errors.title && (
-            <p className="text-sm text-red-500">{errors.title.message}</p>
-          )}
+          {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
         </div>
 
         <div className="space-y-2 animate-slide-up stagger-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="content">Content</Label>
-            <div className="text-xs text-muted-foreground">
-              Rich text editor
-            </div>
+            <div className="text-xs text-muted-foreground">Rich text editor</div>
           </div>
 
           <Controller
@@ -91,26 +111,18 @@ function NotesForm({
             control={control}
             rules={{ required: "Content is required" }}
             render={({ field }) => (
-              <EditorComponent
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Start writing your note..."
-              />
+              <EditorComponent value={field.value} onChange={field.onChange} placeholder="Start writing your note..." />
             )}
           />
 
-          {errors.content && (
-            <p className="text-sm text-red-500">{errors.content.message}</p>
-          )}
+          {errors.content && <p className="text-sm text-red-500">{errors.content.message}</p>}
         </div>
 
         <div className="flex items-center space-x-2 animate-slide-up stagger-3">
           <Switch
             id="is_public"
             checked={isPublic}
-            onCheckedChange={(checked) =>
-              setValue("isPublic", checked, { shouldDirty: true })
-            }
+            onCheckedChange={(checked) => setValue("isPublic", checked, { shouldDirty: true })}
           />
           <Label htmlFor="is_public">Make this note public</Label>
         </div>
@@ -119,11 +131,7 @@ function NotesForm({
         <Button type="button" variant="outline" asChild>
           <Link href="/notes">Cancel</Link>
         </Button>
-        <Button
-          type="submit"
-          className="btn-hover-effect"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" className="btn-hover-effect" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <svg
@@ -132,14 +140,7 @@ function NotesForm({
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path
                   className="opacity-75"
                   fill="currentColor"
@@ -157,7 +158,7 @@ function NotesForm({
         </Button>
       </CardFooter>
     </form>
-  );
+  )
 }
 
-export default NotesForm;
+export default NotesForm

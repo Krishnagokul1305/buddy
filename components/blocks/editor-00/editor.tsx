@@ -1,38 +1,58 @@
 "use client";
 
 import { useState } from "react";
+
 import { ListItemNode, ListNode } from "@lexical/list";
+
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
+
 import {
-  InitialConfigType,
+  type InitialConfigType,
   LexicalComposer,
 } from "@lexical/react/LexicalComposer";
+
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+
 import {
-  EditorState,
+  type EditorState,
   ParagraphNode,
-  SerializedEditorState,
+  type SerializedEditorState,
   TextNode,
 } from "lexical";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { editorTheme } from "@/components/editor/themes/editor-theme";
+
 import { ToolbarPlugin } from "@/components/editor/plugins/toolbar/toolbar-plugin";
+
 import { BlockFormatDropDown } from "@/components/editor/plugins/toolbar/block-format-toolbar-plugin";
+
 import { FormatParagraph } from "@/components/editor/plugins/toolbar/block-format/format-paragraph";
+
 import { FormatHeading } from "@/components/editor/plugins/toolbar/block-format/format-heading";
+
 import { FormatNumberedList } from "@/components/editor/plugins/toolbar/block-format/format-numbered-list";
+
 import { FormatBulletedList } from "@/components/editor/plugins/toolbar/block-format/format-bulleted-list";
+
 import { FormatCheckList } from "@/components/editor/plugins/toolbar/block-format/format-check-list";
+
 import { FormatQuote } from "@/components/editor/plugins/toolbar/block-format/format-quote";
+
 import { ContentEditable } from "@/components/editor/editor-ui/content-editable";
+
 import { ElementFormatToolbarPlugin } from "@/components/editor/plugins/toolbar/element-format-toolbar-plugin";
-import { HistoryToolbarPlugin } from "@/components/editor/plugins/toolbar/history-toolbar-plugin";
+
 import { FontColorToolbarPlugin } from "@/components/editor/plugins/toolbar/font-color-toolbar-plugin";
-import { FontBackgroundToolbarPlugin } from "@/components/editor/plugins/toolbar/font-background-toolbar-plugin";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -66,6 +86,14 @@ export function Editor({
       <LexicalComposer
         initialConfig={{
           ...editorConfig,
+          editorState: (editor) => {
+            if (editorSerializedState) {
+              const parsedState = editor.parseEditorState(
+                editorSerializedState
+              );
+              editor.setEditorState(parsedState);
+            }
+          },
         }}
       >
         <TooltipProvider>
@@ -97,22 +125,42 @@ export function Plugins({
     }
   };
 
+  const handleEditorChange = (editorState: EditorState) => {
+    // Call the onChange callback if provided
+    if (onChange) {
+      onChange(editorState);
+    }
+
+    // Call the onSerializedChange callback if provided
+    if (onSerializedChange) {
+      const serializedState = editorState.toJSON();
+      onSerializedChange(serializedState);
+    }
+  };
+
   return (
     <div className="relative">
       <ToolbarPlugin>
         {({ blockType }) => (
-          <div className="vertical-align-middle sticky top-0 z-10 flex gap-2 overflow-auto border-b p-1">
-            <BlockFormatDropDown>
-              <FormatParagraph />
-              <FormatHeading levels={["h1", "h2", "h3"]} />
-              <FormatNumberedList />
-              <FormatBulletedList />
-              <FormatCheckList />
-              <FormatQuote />
-            </BlockFormatDropDown>
-            <ElementFormatToolbarPlugin />
-            <FontColorToolbarPlugin />
-            <FontBackgroundToolbarPlugin />
+          <div className="sticky top-0 z-10 w-full border-b bg-background">
+            <div className="flex overflow-x-auto p-1 gap-1 scrollbar-hide">
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <BlockFormatDropDown>
+                  <FormatParagraph />
+                  <FormatHeading levels={["h1", "h2", "h3"]} />
+                  <FormatNumberedList />
+                  <FormatBulletedList />
+                  <FormatCheckList />
+                  <FormatQuote />
+                </BlockFormatDropDown>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <ElementFormatToolbarPlugin />
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <FontColorToolbarPlugin />
+              </div>
+            </div>
           </div>
         )}
       </ToolbarPlugin>
@@ -123,13 +171,14 @@ export function Plugins({
             <div ref={onRef}>
               <ContentEditable
                 placeholder={placeholder}
-                className="ContentEditable__root relative block h-72 min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none"
+                className="ContentEditable__root relative block min-h-72 overflow-auto px-4 sm:px-8 py-4 focus:outline-none"
               />
             </div>
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
 
+        <OnChangePlugin onChange={handleEditorChange} />
         <ListPlugin />
         <CheckListPlugin />
       </div>

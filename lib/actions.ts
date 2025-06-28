@@ -6,7 +6,7 @@ import prisma from "./prisma";
 import { UserData } from "@/types/user";
 import { userService } from "@/services/user.service";
 import { revalidatePath } from "next/cache";
-import { Note, NotesFormValues } from "@/types/note";
+import { Access, Note, NotesFormValues } from "@/types/note";
 import { notesService } from "@/services/notes.service";
 
 export async function signInAction({
@@ -79,8 +79,12 @@ export async function deleteAccountAction() {
   await signOut();
 }
 
-export async function shareNoteAction(noteId: number, userId: number) {
-  await notesService.shareNoteWithUser(noteId, userId);
+export async function shareNoteAction(
+  noteId: number,
+  userId: number,
+  access: Access
+) {
+  await notesService.shareNoteWithUser(noteId, userId, access);
   revalidatePath("/notes/shared");
 }
 

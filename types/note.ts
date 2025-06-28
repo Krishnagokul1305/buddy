@@ -36,3 +36,9 @@ export enum AccessLevel {
   EDIT = "EDIT",
   DELETE = "DELETE",
 }
+
+export type Access = "VIEW" | "EDIT" | "DELETE";
+
+export interface NoteWithAccess extends Note {
+  access: Access;
+}
