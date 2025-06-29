@@ -25,6 +25,15 @@ export interface Note {
   sharedWithUsers?: SharedUserAccess[];
 }
 
+export interface RecentlySharedNote {
+  id: number;
+  title: string;
+  sharedBy: string;
+  sharedWith: string;
+  sharedDate: string;
+  access: Access;
+}
+
 export interface SharedUserAccess {
   user: UserProfile;
   access: AccessLevel;

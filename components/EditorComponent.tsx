@@ -76,7 +76,7 @@ export default function EditorComponent({
             type: "root",
             version: 1,
           },
-        };
+        } as SerializedEditorState;
         setEditorState(textState);
         setEditorKey((prev) => prev + 1); // Force remount
       }

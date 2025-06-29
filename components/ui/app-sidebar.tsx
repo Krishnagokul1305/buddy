@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Settings, BookOpen, Home, Folder, User, File } from "lucide-react";
+import { Folder, User, FolderArchive } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,10 +20,11 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { UserData } from "@/types/user";
 import { getCurrentUserAction } from "@/lib/actions";
+import Logo from "../Logo";
 
 const navigationItems = [
-  { title: "Dashboard", icon: Home, url: "/home" },
   { title: "Notes", icon: Folder, url: "/notes" },
+  { title: "SharedNotes", icon: FolderArchive, url: "shared-notes" },
   { title: "Profile", icon: User, url: "/profile" },
 ];
 
@@ -48,13 +49,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="border-r">
-      <SidebarHeader className="border-b p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center text-white justify-center rounded-lg bg-blue-600">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          <span className="text-lg font-semibold">PlacementBuddy</span>
-        </div>
+      <SidebarHeader className="border-b">
+        <Logo />
       </SidebarHeader>
 
       <SidebarContent>

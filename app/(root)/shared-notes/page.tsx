@@ -1,5 +1,4 @@
 import NotesCard from "@/components/NotesCard";
-import SharedNotesCard from "@/components/SharedNotesCard";
 import { auth } from "@/lib/auth";
 import { notesService } from "@/services/notes.service";
 import { Note } from "@/types/note";

@@ -6,9 +6,11 @@ import {
   Note,
   NotesFormValues,
   NoteWithAccess,
+  RecentlySharedNote,
 } from "@/types/note";
 import { generateSlug } from "@/lib/utils";
 import { UserData } from "@/types/user";
+import { subDays } from "date-fns";
 
 class NotesService {
   async getUserNotes(userId: number): Promise<Note[] | null> {
@@ -224,6 +226,23 @@ class NotesService {
     }
   }
 
+  async getNoteStats(userId: number) {
+    const [totalNotes, privateNotes, publicNotes, sharedToMe] =
+      await Promise.all([
+        prisma.note.count({ where: { authorId: userId } }),
+        prisma.note.count({ where: { authorId: userId, isPublic: false } }),
+        prisma.note.count({ where: { authorId: userId, isPublic: true } }),
+        prisma.noteShare.count({ where: { userId } }),
+      ]);
+
+    return {
+      totalNotes,
+      privateNotes,
+      publicNotes,
+      sharedToMe,
+    };
+  }
+
   async removeSharedUser(noteId: number, userId: number): Promise<boolean> {
     try {
       await prisma.noteShare.delete({
@@ -239,6 +258,69 @@ class NotesService {
       console.error("Error removing shared user:", error);
       return false;
     }
+  }
+
+  async getRecentNotes(userId: number): Promise<Note[] | null> {
+    const sevenDaysAgo = subDays(new Date(), 7);
+
+    return (await prisma.note.findMany({
+      where: {
+        authorId: userId,
+        createdAt: {
+          gte: sevenDaysAgo,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        isPublic: true,
+      },
+    })) as Note[];
+  }
+
+  async getRecentlySharedNotes(
+    userId: number
+  ): Promise<RecentlySharedNote[] | null> {
+    const shares = await prisma.noteShare.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        createdAt: true,
+        access: true,
+        note: {
+          select: {
+            id: true,
+            title: true,
+            author: {
+              select: {
+                username: true,
+                email: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!shares.length) return null;
+
+    return shares.map((share) => ({
+      id: share.note.id,
+      title: share.note.title,
+      sharedBy: share.note.author.username,
+      sharedWith: share.user.email,
+      sharedDate: share.createdAt.toISOString(),
+      access: share.access,
+    }));
   }
 }
 

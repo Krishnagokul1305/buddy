@@ -31,7 +31,7 @@ function NotesCard({
   };
 
   return (
-    <Card className="overflow-hidden hover:cursor-pointer flex flex-col h-full group hover:shadow-lg transition-shadow cursor-pointer">
+    <Card className="overflow-hidden hover:cursor-pointer flex flex-col h-full  backdrop-blur-sm group hover:shadow-lg transition-shadow cursor-pointer">
       <CardHeader
         className="pb-3"
         onClick={() => router.push(`/notes/${note.shareSlug}`)}
