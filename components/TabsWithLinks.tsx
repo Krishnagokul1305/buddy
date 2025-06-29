@@ -2,44 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Share } from "lucide-react";
 import { Tabs, TabsList } from "@/components/ui/tabs";
+import type { LucideIcon } from "lucide-react";
 
-export default function TabsWithLinks() {
+type TabItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+type TabsWithLinksProps = {
+  tabs: TabItem[];
+};
+
+export default function TabsWithLinks({ tabs }: TabsWithLinksProps) {
   const pathname = usePathname();
 
-  const isMyNotesActive = pathname === "/notes" || pathname === "/";
-  const isSharedNotesActive = pathname === "/notes/shared";
-
   return (
-    <Tabs defaultValue="my-notes" className="w-full">
-      <TabsList className="h-auto  p-0 bg-transparent justify-start border-b rounded-none w-auto">
-        <Link
-          href="/notes"
-          className={`rounded-none gap-2 border-b-2 ${
-            isMyNotesActive ? "border-primary " : "border-transparent"
-          } ${
-            isMyNotesActive
-              ? "data-[state=active]:border-primary dark:text-white text-black"
-              : ""
-          } data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none flex items-center`}
-        >
-          <BookOpen className="h-4 w-4" />
-          My Notes
-        </Link>
-        <Link
-          href="/notes/shared"
-          className={`rounded-none gap-2 border-b-2 ${
-            isSharedNotesActive ? "border-primary" : "border-transparent"
-          } ${
-            isSharedNotesActive
-              ? "data-[state=active]:border-primary dark:text-white text-black"
-              : ""
-          } data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none flex items-center`}
-        >
-          <Share className="h-4 w-4" />
-          Shared Notes
-        </Link>
+    <Tabs className="w-full">
+      <TabsList className="h-auto p-0 bg-transparent justify-start border-b rounded-none w-auto">
+        {tabs.map(({ label, href, icon: Icon }) => {
+          const isActive =
+            pathname === href || (href === "/notes" && pathname === "/");
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`rounded-none gap-2 border-b-2 ${
+                isActive ? "border-primary" : "border-transparent"
+              } ${
+                isActive ? "dark:text-white text-black" : ""
+              } data-[state=active]:bg-transparent bg-transparent px-4 py-2 data-[state=active]:shadow-none flex items-center`}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </Link>
+          );
+        })}
       </TabsList>
     </Tabs>
   );

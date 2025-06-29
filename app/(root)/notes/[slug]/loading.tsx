@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function loading() {
   return (
-    <Card className="animate-pulse">
+    <Card className="animate-pulse p-5">
       <CardHeader>
         <Skeleton className="h-8 w-3/4" />
         <Skeleton className="h-4 w-1/3" />

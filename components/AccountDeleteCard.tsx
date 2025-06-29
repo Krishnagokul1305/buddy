@@ -16,10 +16,7 @@ function AccountDeleteCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-red-600">
-          <Trash2 className="h-5 w-5" />
-          Danger Zone
-        </CardTitle>
+        <CardTitle className=" text-red-600">Danger Zone</CardTitle>
         <CardDescription>
           Irreversible actions that will permanently affect your account
         </CardDescription>

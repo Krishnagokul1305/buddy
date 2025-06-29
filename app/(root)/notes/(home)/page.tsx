@@ -6,7 +6,10 @@ import NotesCard from "@/components/NotesCard";
 import { Note } from "@/types/note";
 
 export default async function NotesPage() {
-  const notes: Note[] | null = await notesService.getUserNotes();
+  const session = await auth();
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  if (!userId) return null;
+  const notes: Note[] | null = await notesService.getUserNotes(userId);
   if (!notes || notes.length == 0) {
     return (
       <>
@@ -30,7 +33,7 @@ export default async function NotesPage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
       {notes.map((note) => (
-        <NotesCard note={note} key={note.id} />
+        <NotesCard note={note} key={note.id} userId={userId} />
       ))}
     </div>
   );

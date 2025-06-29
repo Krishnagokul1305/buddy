@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { BookOpen, PlusCircle, Share } from "lucide-react";
 import Link from "next/link";
-import TabsWithLinks from "@/components/TabsWithLinks";
+import NotesTabsWrapper from "@/components/NotesTabsWrapper";
 
 function layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +20,6 @@ function layout({ children }: { children: React.ReactNode }) {
               </Button>
             </Link>
           </div>
-          <TabsWithLinks />
           {children}
         </div>
       </main>

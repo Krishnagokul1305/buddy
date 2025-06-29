@@ -37,6 +37,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           username: user.username,
           email: user.email,
         };
+        // const dummyUser = {
+        //   id: "1",
+        //   email: "dummy@example.com",
+        //   username: "DummyUser",
+        //   password: "test1234", // plain text just for testing
+        // };
+
+        // if (email === dummyUser.email && password === dummyUser.password) {
+        //   return {
+        //     id: dummyUser.id,
+        //     email: dummyUser.email,
+        //     username: dummyUser.username,
+        //   };
+        // }
+        // throw new Error("Invalid credentials");
       },
     }),
   ],

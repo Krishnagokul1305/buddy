@@ -1,44 +1,25 @@
 import { auth } from "@/lib/auth";
-import type { UserData } from "@/types/user";
+import type { UserData, UserProfile } from "@/types/user";
 import prisma from "@/lib/prisma";
 import { saltAndHashPassword, verifyPassword } from "@/lib/utils";
 
 export class UserService {
-  async getCurrentUserProfile(): Promise<UserData | null> {
+  async getCurrentUserProfile(): Promise<UserProfile | null> {
     try {
       const session = await auth();
       if (!session?.user?.email) {
         return null;
       }
-      const user: UserData | null = (await prisma.user.findUnique({
+      const user: UserProfile | null = (await prisma.user.findUnique({
         where: {
           email: session.user.email,
         },
-      })) as UserData;
+      })) as UserProfile;
 
       if (!user) {
         return null;
       }
       return user;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async updateUserProfile(userData: UserData) {
-    try {
-      const session = await auth();
-      if (!session?.user?.email) {
-        return null;
-      }
-      const { id, ...rest } = userData;
-      await prisma.user.update({
-        where: {
-          email: session.user.email,
-        },
-        data: { ...rest, year_of_study: rest.year_of_study + "" },
-      });
-      return true;
     } catch (error) {
       return null;
     }
@@ -105,7 +86,7 @@ export class UserService {
             {
               OR: [
                 {
-                  name: {
+                  username: {
                     contains: query,
                     mode: "insensitive",
                   },
@@ -129,8 +110,6 @@ export class UserService {
           id: true,
           username: true,
           email: true,
-          name: true,
-          profile_picture: true,
         },
       });
 

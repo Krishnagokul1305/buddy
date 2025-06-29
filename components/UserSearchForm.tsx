@@ -1,22 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, AlertCircle, Loader2 } from "lucide-react";
+import { Search, AlertCircle, Loader2, Eye, Edit } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserData } from "@/types/user";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import type { UserData } from "@/types/user";
 import { shareNoteAction } from "@/lib/actions";
 import { toast } from "sonner";
+import type { Access } from "@/types/note";
+
+interface SharedUser {
+  userId: string;
+  permission: Access;
+}
 
 export function UserSearchForm({ noteId }: { noteId: number }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState<UserData[] | null>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sharedWith, setSharedWith] = useState<string[]>([]);
+  const [sharedWith, setSharedWith] = useState<SharedUser[]>([]);
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
+  const [selectedPermissions, setSelectedPermissions] = useState<
+    Record<string, Access>
+  >({});
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,19 +67,37 @@ export function UserSearchForm({ noteId }: { noteId: number }) {
     };
 
     fetchUsers();
+
     return () => controller.abort();
   }, [searchQuery]);
 
-  async function handleShare(note: number, userId: string) {
+  async function handleShare(note: number, userId: string, permission: Access) {
     try {
       setLoadingUserId(userId);
-      await shareNoteAction(note, +userId);
-      setSharedWith((prev) => [...prev, userId]);
+      await shareNoteAction(note, +userId, permission);
+      setSharedWith((prev) => [...prev, { userId, permission }]);
+      setSelectedPermissions((prev) => {
+        const updated = { ...prev };
+        delete updated[userId];
+        return updated;
+      });
+      toast.success(`Note shared with ${permission.toLowerCase()} access`);
     } catch (error) {
-      toast("Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setLoadingUserId(null);
     }
+  }
+
+  function handlePermissionChange(userId: string, permission: Access) {
+    setSelectedPermissions((prev) => ({
+      ...prev,
+      [userId]: permission,
+    }));
+  }
+
+  function getSharedUser(userId: string): SharedUser | undefined {
+    return sharedWith.find((shared) => shared.userId === userId);
   }
 
   return (
@@ -81,83 +116,141 @@ export function UserSearchForm({ noteId }: { noteId: number }) {
         {loading ? (
           <ul className="space-y-3">
             {[...Array(5)].map((_, index) => (
-              <li key={index} className="flex items-center justify-between p-2">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-8 w-8 rounded-full" />
-                  <div>
-                    <Skeleton className="h-4 w-[120px] mb-2" />
-                    <Skeleton className="h-3 w-[180px]" />
+              <li
+                key={index}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-md border gap-3 sm:gap-0"
+              >
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <Skeleton className="h-4 w-full max-w-[120px] mb-2" />
+                    <Skeleton className="h-3 w-full max-w-[180px]" />
                   </div>
                 </div>
-                <Skeleton className="h-8 w-16" />
+                <div className="flex items-center gap-2 justify-end sm:justify-start">
+                  <Skeleton className="h-8 w-20 sm:w-24" />
+                  <Skeleton className="h-8 w-16" />
+                </div>
               </li>
             ))}
           </ul>
         ) : error ? (
           <div className="text-center py-4 text-red-500 flex flex-col items-center">
             <AlertCircle className="mb-2" />
-            <p>{error}</p>
+            <p className="text-sm px-4">{error}</p>
             <Button
               variant="outline"
               size="sm"
-              className="mt-2"
+              className="mt-2 bg-transparent"
               onClick={() => window.location.reload()}
             >
               Retry
             </Button>
           </div>
         ) : !users || users.length === 0 ? (
-          <div className="text-center py-4 text-muted-foreground">
-            No users found matching "{searchQuery}"
+          <div className="text-center py-4 text-muted-foreground text-sm px-4">
+            {searchQuery
+              ? `No users found matching "${searchQuery}"`
+              : "Start typing to search for users"}
           </div>
         ) : (
           <ul className="space-y-3">
             {users.map((user) => {
-              const isShared = sharedWith.includes(user.id + "");
+              const sharedUser = getSharedUser(user.id + "");
+              const isShared = !!sharedUser;
               const isLoading = loadingUserId === user.id + "";
+              const selectedPermission =
+                selectedPermissions[user.id + ""] || "VIEW";
 
               return (
                 <li
                   key={user.id}
-                  className="flex items-center justify-between p-2 rounded-md hover:bg-muted"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-md border gap-3 sm:gap-0"
                 >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="size-8">
-                      <AvatarImage
-                        src={user.profile_picture || "/placeholder.svg"}
-                        alt={user.name || "user profile"}
-                      />
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <Avatar className="size-8 flex-shrink-0">
                       <AvatarFallback>
-                        {(user.name || "U")
+                        {(user.username || "U")
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">
-                        {user.name || "User"}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate">
+                        {user.username || "User"}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground truncate">
                         {user.email}
                       </p>
                     </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    className="ml-2"
-                    disabled={isShared || isLoading}
-                    onClick={() => handleShare(noteId, user.id + "")}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="animate-spin size-4" />
-                    ) : isShared ? (
-                      "Shared"
+                  <div className="flex items-center gap-2 justify-end sm:justify-start">
+                    {isShared ? (
+                      <Badge
+                        variant={
+                          sharedUser?.permission === "EDIT"
+                            ? "default"
+                            : "secondary"
+                        }
+                        className="flex items-center gap-1 text-xs"
+                      >
+                        {sharedUser?.permission === "EDIT" ? (
+                          <Edit className="size-3" />
+                        ) : (
+                          <Eye className="size-3" />
+                        )}
+                        {sharedUser?.permission}
+                      </Badge>
                     ) : (
-                      "Share"
+                      <div className="flex items-center gap-2 w-full ms-auto sm:w-auto">
+                        <Select
+                          value={selectedPermission}
+                          onValueChange={(value: Access) =>
+                            handlePermissionChange(user.id + "", value)
+                          }
+                          disabled={isLoading}
+                        >
+                          <SelectTrigger className="w-20 sm:w-24 h-8 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="VIEW">
+                              <div className="flex items-center gap-2">
+                                <Eye className="size-3" />
+                                <span className="text-xs">View</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="EDIT">
+                              <div className="flex items-center gap-2">
+                                <Edit className="size-3" />
+                                <span className="text-xs">Edit</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          size="sm"
+                          disabled={isLoading}
+                          onClick={() =>
+                            handleShare(
+                              noteId,
+                              user.id + "",
+                              selectedPermission
+                            )
+                          }
+                          className="text-xs px-3 h-8"
+                        >
+                          {isLoading ? (
+                            <Loader2 className="animate-spin size-4" />
+                          ) : (
+                            "Share"
+                          )}
+                        </Button>
+                      </div>
                     )}
-                  </Button>
+                  </div>
                 </li>
               );
             })}
