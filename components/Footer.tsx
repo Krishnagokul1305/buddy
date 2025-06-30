@@ -7,10 +7,10 @@ function Footer() {
       <div className="container px-4 md:px-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} NotesHub. All rights reserved.
+            &copy; {new Date().getFullYear()} NotesBuddy. All rights reserved.
           </p>
           <Link
-            href="https://github.com"
+            href="https://github.com/Krishnagokul1305/buddy"
             className="text-muted-foreground hover:text-foreground transition-colors"
             target="_blank"
             rel="noopener noreferrer"

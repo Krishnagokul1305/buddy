@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,9 +9,10 @@ import {
   Zap,
   Shield,
   Sparkles,
-  Upload,
   Edit3,
   ArrowRight,
+  Eye,
+  Share,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -64,7 +64,7 @@ function HeroSection() {
             >
               <Badge className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200/50 px-4 py-2 text-sm font-medium">
                 <Sparkles className="h-3 w-3 mr-2" />
-                Next-Gen Knowledge Platform
+                Next-Gen Notes Platform
               </Badge>
             </motion.div>
 
@@ -77,7 +77,7 @@ function HeroSection() {
             >
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none">
                 <span className="block text-gray-900 dark:text-white">
-                  Your Ideas,
+                  Your Notes,
                 </span>
                 <span className=" bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Organized{" "}
@@ -85,7 +85,7 @@ function HeroSection() {
                 <span className=" text-gray-900 dark:text-white">& Shared</span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-lg leading-relaxed">
-                The most intuitive way to capture thoughts, store files, and
+                The most intuitive way to capture thoughts, organize ideas, and
                 collaborate with your team in real-time.
               </p>
             </motion.div>
@@ -98,7 +98,7 @@ function HeroSection() {
             >
               {[
                 { icon: Edit3, text: "Rich Editor" },
-                { icon: Cloud, text: "Cloud Sync" },
+                { icon: Share, text: "Share Notes" },
                 { icon: Users, text: "Team Collab" },
               ].map((item, index) => (
                 <motion.div
@@ -149,7 +149,7 @@ function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="group mt-3 rounded-full dark:bg-gray-800 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="group mt-3 rounded-full dark:bg-gray-800 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 bg-transparent"
                 >
                   Login
                   <motion.div
@@ -241,10 +241,10 @@ function HeroSection() {
                       </motion.div>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          My Workspace
+                          My Notes
                         </h3>
                         <p className="text-sm text-gray-500">
-                          12 notes, 8 files
+                          24 notes, 8 shared
                         </p>
                       </div>
                     </div>
@@ -264,8 +264,8 @@ function HeroSection() {
                   <div className="grid grid-cols-3 gap-3">
                     {[
                       { icon: Edit3, label: "New Note", color: "blue" },
-                      { icon: Upload, label: "Upload", color: "indigo" },
-                      { icon: Share2, label: "Share", color: "purple" },
+                      { icon: Eye, label: "Preview", color: "blue" },
+                      { icon: Share2, label: "Share", color: "blue" },
                     ].map((action, index) => (
                       <motion.div
                         key={index}
@@ -291,24 +291,24 @@ function HeroSection() {
                     ))}
                   </div>
 
-                  {/* Recent Files */}
+                  {/* Recent Notes */}
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Recent Files
+                      Recent Notes
                     </h4>
                     <div className="space-y-2">
                       {[
                         {
-                          name: "Project Notes.md",
+                          name: "Project Planning.md",
                           time: "2 min ago",
                           type: "note",
                         },
                         {
-                          name: "Design Assets.zip",
+                          name: "Meeting Notes.md",
                           time: "1 hour ago",
-                          type: "file",
+                          type: "shared",
                         },
-                      ].map((file, index) => (
+                      ].map((note, index) => (
                         <motion.div
                           key={index}
                           className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
@@ -322,22 +322,22 @@ function HeroSection() {
                         >
                           <div
                             className={`h-8 w-8 rounded-lg ${
-                              file.type === "note"
+                              note.type === "note"
                                 ? "bg-blue-100 dark:bg-blue-900/30"
                                 : "bg-green-100 dark:bg-green-900/30"
                             } flex items-center justify-center`}
                           >
-                            {file.type === "note" ? (
+                            {note.type === "note" ? (
                               <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                             ) : (
-                              <Upload className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <Share2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                              {file.name}
+                              {note.name}
                             </p>
-                            <p className="text-xs text-gray-500">{file.time}</p>
+                            <p className="text-xs text-gray-500">{note.time}</p>
                           </div>
                         </motion.div>
                       ))}

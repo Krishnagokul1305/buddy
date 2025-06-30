@@ -24,7 +24,7 @@ import Logo from "../Logo";
 
 const navigationItems = [
   { title: "Notes", icon: Folder, url: "/notes" },
-  { title: "SharedNotes", icon: FolderArchive, url: "shared-notes" },
+  { title: "SharedNotes", icon: FolderArchive, url: "/shared-notes" },
   { title: "Profile", icon: User, url: "/profile" },
 ];
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Share2, Upload, UploadCloud } from "lucide-react";
+import { FileText, Share2, Edit3, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function DemoSection() {
@@ -32,7 +32,8 @@ function DemoSection() {
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Experience the power of seamless note-taking and file management
+            Experience the power of seamless note-taking and collaborative
+            writing
           </p>
         </motion.div>
 
@@ -64,21 +65,21 @@ function DemoSection() {
                 <AnimatePresence mode="wait">
                   {[
                     {
-                      icon: FileText,
+                      icon: Edit3,
                       title: "Create Notes",
                       description: "Rich text editor with markdown support",
                       active: activeFeature === 0,
                     },
                     {
-                      icon: UploadCloud,
-                      title: "Upload Files",
-                      description: "Drag & drop file management",
+                      icon: Eye,
+                      title: "Preview & Edit",
+                      description: "Live preview with seamless editing",
                       active: activeFeature === 1,
                     },
                     {
                       icon: Share2,
                       title: "Share & Collaborate",
-                      description: "Real-time collaboration tools",
+                      description: "collaboration tools with rich editor",
                       active: activeFeature === 2,
                     },
                   ].map((item, index) => (

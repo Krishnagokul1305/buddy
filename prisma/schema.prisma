@@ -39,14 +39,16 @@ model Note {
 model NoteShare {
   id         Int      @id @default(autoincrement())
   noteId     Int
-  note       Note     @relation(fields: [noteId], references: [id])
+  note       Note     @relation(fields: [noteId], references: [id], onDelete: Cascade) 
   userId     Int
   user       User     @relation(fields: [userId], references: [id])
   access     AccessLevel
   createdAt  DateTime @default(now())
+
   @@unique([noteId, userId])
   @@index([userId])
 }
+
 
 enum AccessLevel {
   VIEW

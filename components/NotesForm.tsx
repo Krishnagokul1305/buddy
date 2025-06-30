@@ -4,19 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import Link from "next/link";
 import { Save } from "lucide-react";
 import type { Note, NotesFormValues } from "@/types/note";
 import { createNoteAction, updateNoteAction } from "@/lib/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import EditorComponent from "./EditorComponent";
+import { MarkdownEditor } from "./MarkdownEditor";
 
 function NotesForm({
   note,
@@ -45,8 +40,6 @@ function NotesForm({
 
   async function onSubmit(data: NotesFormValues) {
     try {
-      console.log("Submitting form with data:", data);
-
       if (!isEdit) {
         await createNoteAction(data);
         toast("Created new note");
@@ -91,10 +84,9 @@ function NotesForm({
             control={control}
             rules={{ required: "Content is required" }}
             render={({ field }) => (
-              <EditorComponent
+              <MarkdownEditor
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Start writing your note..."
               />
             )}
           />

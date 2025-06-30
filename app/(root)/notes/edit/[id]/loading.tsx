@@ -8,7 +8,7 @@ import {
 
 export default function loading() {
   return (
-    <div>
+    <div className="container py-8">
       <CardHeader>
         <CardDescription>
           <Skeleton className="h-4 w-64" />
