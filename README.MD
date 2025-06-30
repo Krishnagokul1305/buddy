@@ -5,7 +5,6 @@ A modern, full-featured notes sharing application built with Next.js 15, allowin
 ## ✨ Features
 
 - **📝 Rich Markdown Editor**: Create and edit notes with full markdown support
-- **🔗 Note Sharing**: Share notes with other users via unique shareable links
 - **👥 Collaboration**: Share notes with specific users and manage permissions
 - **🔍 Search & Discovery**: Find notes quickly with powerful search functionality
 - **👤 User Profiles**: Personalized user profiles and settings
@@ -20,7 +19,7 @@ A modern, full-featured notes sharing application built with Next.js 15, allowin
 - **Forms**: React Hook Form with validation
 - **Database**: NeonDB (PostgreSQL), Prisma ORM
 - **Authentication**: NextAuth.js
-- **Markdown**: ReactMarkdown with remark-gfm
+- **Markdown**: ReactMarkdown with react-markdown-editor-lite
 - **Deployment**: Vercel (recommended)
 
 ## 🚀 Getting Started
@@ -36,7 +35,7 @@ A modern, full-featured notes sharing application built with Next.js 15, allowin
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/notes-app.git
+   git clone https://github.com/Krishnagokul1305/buddy
    cd notes-app
    ```
 
