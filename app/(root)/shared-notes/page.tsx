@@ -4,11 +4,15 @@ import { notesService } from "@/services/notes.service";
 import { Note } from "@/types/note";
 import { Share } from "lucide-react";
 
-async function page() {
+async function page({ searchParams }: { searchParams: { search: string } }) {
   const session = await auth();
   const userId = session?.user?.id ? Number(session.user.id) : null;
+  const { search } = await searchParams;
   if (!userId) return null;
-  const notes: Note[] | null = await notesService.getNotesSharedToUser(userId);
+  const notes: Note[] | null = await notesService.getNotesSharedToUser(
+    userId,
+    search
+  );
   if (!notes || notes.length == 0) {
     return (
       <div className="text-center py-12">

@@ -6,6 +6,15 @@ import { Share2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: `NotesBuddy Dashboard - Manage & Share Your Notes`,
+  description:
+    "Access your dashboard to manage, share, and discover notes on the platform.",
+  generator: "v0.dev",
+};
+
 async function layout({ children }: { children: React.ReactNode }) {
   const profile = await userService.getCurrentUserProfile();
   return (
@@ -15,12 +24,16 @@ async function layout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-row px-2 items-start sm:items-center gap-4">
             <Avatar className="h-16 w-16 bg-blue-500 rounded-full">
               <AvatarFallback className="text-white h-16 w-16 flex items-center justify-center">
-                {profile?.username.charAt(0).toUpperCase()}
+                {profile?.username.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-1">
-              <h1 className="text-2xl font-bold">{profile?.username}</h1>
-              <p className="text-muted-foreground">{profile?.email}</p>
+              <h1 className="text-2xl font-bold">
+                {profile?.username || "user"}
+              </h1>
+              <p className="text-muted-foreground">
+                {profile?.email || "User@gmail.com"}
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Link href="/profile/edit" className="w-full sm:w-auto"></Link>

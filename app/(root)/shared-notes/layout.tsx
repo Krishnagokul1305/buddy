@@ -1,3 +1,5 @@
+import { SearchBar } from "@/components/search-bar";
+
 function layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
@@ -6,6 +8,7 @@ function layout({ children }: { children: React.ReactNode }) {
           <div className="flex gap-3  justify-between md:items-center">
             <h1 className="text-3xl font-bold">Shared Notes</h1>
           </div>
+          <SearchBar />
           {children}
         </div>
       </main>

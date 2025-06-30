@@ -13,15 +13,24 @@ import { UserData } from "@/types/user";
 import { subDays } from "date-fns";
 
 class NotesService {
-  async getUserNotes(userId: number): Promise<Note[] | null> {
+  async getUserNotes(userId: number, search?: string): Promise<Note[] | null> {
     try {
       const notes = await prisma.note.findMany({
         where: {
           authorId: userId,
+          ...(search
+            ? {
+                title: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              }
+            : {}),
         },
       });
       return notes;
     } catch (error) {
+      console.error("Failed to fetch notes:", error);
       return null;
     }
   }
@@ -139,7 +148,10 @@ class NotesService {
     }
   }
 
-  async getNotesSharedToUser(userId: number): Promise<NoteWithAccess[] | null> {
+  async getNotesSharedToUser(
+    userId: number,
+    search?: string
+  ): Promise<NoteWithAccess[] | null> {
     try {
       const notes = await prisma.note.findMany({
         where: {
@@ -148,6 +160,14 @@ class NotesService {
               userId,
             },
           },
+          ...(search
+            ? {
+                title: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              }
+            : {}),
         },
         include: {
           NoteShare: {
@@ -160,6 +180,7 @@ class NotesService {
           },
         },
       });
+
       const mappedNotes = notes.map((note) => ({
         id: note.id,
         title: note.title,
@@ -174,6 +195,7 @@ class NotesService {
 
       return mappedNotes;
     } catch (error) {
+      console.error("Failed to fetch shared notes:", error);
       return null;
     }
   }

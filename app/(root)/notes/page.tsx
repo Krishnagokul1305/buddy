@@ -5,11 +5,16 @@ import { notesService } from "@/services/notes.service";
 import NotesCard from "@/components/NotesCard";
 import { Note } from "@/types/note";
 
-export default async function NotesPage() {
+export default async function NotesPage({
+  searchParams,
+}: {
+  searchParams: { search: string };
+}) {
+  const { search } = await searchParams;
   const session = await auth();
   const userId = session?.user?.id ? Number(session.user.id) : null;
   if (!userId) return null;
-  const notes: Note[] | null = await notesService.getUserNotes(userId);
+  const notes: Note[] | null = await notesService.getUserNotes(userId, search);
   if (!notes || notes.length == 0) {
     return (
       <>
