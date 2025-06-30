@@ -20,6 +20,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { auth } from "@/lib/auth";
 import MarkDownPreviewer from "@/components/MarkDownPreviewer";
+import BackButton from "@/components/BackButton";
 
 export default async function SharedNotePage({
   params,
@@ -84,13 +85,7 @@ export default async function SharedNotePage({
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 container py-8 ">
         <div className="mx-auto">
-          <Link
-            href="/notes"
-            className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
-          >
-            <ArrowLeft className="mr-1 h-4 w-4" />
-            Back to notes
-          </Link>
+          <BackButton>Back to notes</BackButton>
           <Card>
             <CardHeader className="border-b p-6">
               <div className="flex items-center justify-between gap-4">

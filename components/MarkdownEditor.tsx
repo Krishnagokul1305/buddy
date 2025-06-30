@@ -39,27 +39,27 @@ export function MarkdownEditor({
     if (onChange) onChange(value);
   };
 
-  const handleExportMd = () => {
-    const blob = new Blob([content], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `document-${new Date().toISOString().split("T")[0]}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  // const handleExportMd = () => {
+  //   const blob = new Blob([content], { type: "text/markdown" });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = `document-${new Date().toISOString().split("T")[0]}.md`;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  //   URL.revokeObjectURL(url);
+  // };
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(content);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
+  // const handleCopy = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(content);
+  //     setIsCopied(true);
+  //     setTimeout(() => setIsCopied(false), 2000);
+  //   } catch (err) {
+  //     console.error("Failed to copy text: ", err);
+  //   }
+  // };
 
   return (
     <div className={cn("w-full h-full", className)}>

@@ -49,7 +49,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="border-r">
-      <SidebarHeader className="border-b">
+      <SidebarHeader className="border-b py-3">
         <Logo />
       </SidebarHeader>
 

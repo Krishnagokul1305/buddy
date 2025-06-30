@@ -19,12 +19,7 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   const router = useRouter();
-
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Page error:", error);
-  }, [error]);
-
+  console.log(error);
   const handleGoBack = () => {
     router.back();
   };

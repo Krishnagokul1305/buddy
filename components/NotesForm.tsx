@@ -50,7 +50,6 @@ function NotesForm({
       }
       router.push("/notes");
     } catch (error) {
-      console.error("Error submitting form:", error);
       toast("Error creating note");
     }
   }
@@ -84,10 +83,7 @@ function NotesForm({
             control={control}
             rules={{ required: "Content is required" }}
             render={({ field }) => (
-              <MarkdownEditor
-                value={field.value}
-                onChange={field.onChange}
-              />
+              <MarkdownEditor value={field.value} onChange={field.onChange} />
             )}
           />
 

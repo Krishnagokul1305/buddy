@@ -53,7 +53,6 @@ export class AuthService extends ApiService {
       }
       return null;
     } catch (error) {
-      console.error("Get current user error:", error);
       return null;
     }
   }
@@ -64,7 +63,6 @@ export class AuthService extends ApiService {
       const user = await this.getCurrentUser(token);
       return !!user;
     } catch (error) {
-      console.error("Token validation error:", error);
       return false;
     }
   }
