@@ -1,18 +1,9 @@
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowLeft, Search, Share2, Sparkles, Users } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Search, Share2, Sparkles } from "lucide-react";
 import { notesService } from "@/services/notes.service";
-import { Note } from "@/types/note";
+import type { Note } from "@/types/note";
 import ReusableModal from "@/components/ReusableModal";
 import { UserSearchForm } from "@/components/UserSearchForm";
 import SharedWithList from "@/components/SharedWithList";
@@ -22,7 +13,7 @@ import { auth } from "@/lib/auth";
 import MarkDownPreviewer from "@/components/MarkDownPreviewer";
 import BackButton from "@/components/BackButton";
 
-export default async function SharedNotePage({
+export default async function NotesPage({
   params,
 }: {
   params: { slug: string };
@@ -30,16 +21,18 @@ export default async function SharedNotePage({
   const { slug } = await params;
   const session = await auth();
   const userId = session?.user?.id ? Number(session.user.id) : null;
+
   if (!userId) return null;
-  const note: Note | null = await notesService.getNoteBySlug(slug, userId);
-  // const serialized = JSON.parse(note?.content ?? "{}");
+
+  const note:
+    | (Note & { ownerInfo: { username: string; email: string } })
+    | null = await notesService.getNoteBySlug(slug, userId);
   if (!note)
     return (
       <div className="flex items-center justify-center min-h-[60vh] p-4">
         <Card className="w-full max-w-lg border-none shadow-none">
           <CardContent className="p-10">
             <div className="text-center space-y-8">
-              {/* Animated search illustration */}
               <div className="relative mx-auto w-24 h-24">
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full opacity-20 animate-ping"></div>
                 <div className="relative w-24 h-24 bg-gradient-to-r from-orange-100 to-pink-100 rounded-full flex items-center justify-center">
@@ -47,7 +40,6 @@ export default async function SharedNotePage({
                 </div>
                 <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-500 animate-bounce" />
               </div>
-
               {/* Content */}
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -57,14 +49,12 @@ export default async function SharedNotePage({
                     void. Don't worry, your other notes are safe and sound!
                   </p>
                 </div>
-
                 {/* Stats or helpful info */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full text-sm text-blue-700">
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                   <span>Try checking your notes list</span>
                 </div>
               </div>
-
               {/* Action buttons */}
               <div className="space-y-3">
                 <Link
@@ -88,15 +78,32 @@ export default async function SharedNotePage({
           <BackButton>Back to notes</BackButton>
           <Card>
             <CardHeader className="border-b p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div className="space-y-1">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-3">
                   <CardTitle className="text-2xl font-bold sm:text-3xl">
                     {note.title}
                   </CardTitle>
-                  <CardDescription className="text-sm sm:text-base">
+
+                  {/* Author Information */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                      <span className="text-sm font-medium text-foreground">
+                        {note.ownerInfo.username}
+                      </span>
+                      <span className="hidden sm:block text-muted-foreground">
+                        •
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {note.ownerInfo.email}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* <CardDescription className="text-sm sm:text-base">
                     Shared on {formatDate(note.createdAt + "")} • Public Note
-                  </CardDescription>
+                  </CardDescription> */}
                 </div>
+
                 {session?.user?.id == String(note.authorId) && (
                   <ReusableModal
                     title="Share document"
@@ -105,7 +112,7 @@ export default async function SharedNotePage({
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9 shrink-0"
+                        className="h-9 w-9 shrink-0 bg-transparent"
                         aria-label="Share note"
                       >
                         <Share2 className="h-4 w-4" />
@@ -117,10 +124,12 @@ export default async function SharedNotePage({
                 )}
               </div>
             </CardHeader>
+
             <CardContent className="pt-8">
               <MarkDownPreviewer content={note.content} />
             </CardContent>
           </Card>
+
           {session?.user?.id == String(note.authorId) && (
             <div className="mt-4">
               <Suspense

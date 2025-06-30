@@ -113,7 +113,12 @@ class NotesService {
     }
   }
 
-  async getNoteBySlug(slug: string, userId: number): Promise<Note | null> {
+  async getNoteBySlug(
+    slug: string,
+    userId: number
+  ): Promise<
+    (Note & { ownerInfo: { username: string; email: string } }) | null
+  > {
     try {
       const note = await prisma.note.findUnique({
         where: {
@@ -123,6 +128,13 @@ class NotesService {
           NoteShare: {
             where: {
               userId,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
             },
           },
         },
@@ -135,7 +147,15 @@ class NotesService {
       const hasAccess = note.NoteShare.length > 0;
 
       if (isAuthor || isPublic || hasAccess) {
-        return note;
+        const ownerInfo = {
+          username: note.author.username,
+          email: note.author.email,
+        };
+
+        return {
+          ...note,
+          ownerInfo,
+        };
       }
 
       return null;
