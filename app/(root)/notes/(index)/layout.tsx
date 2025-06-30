@@ -1,7 +1,7 @@
+import { SearchBar } from "@/components/search-bar";
 import { Button } from "@/components/ui/button";
-import { BookOpen, PlusCircle, Share } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import Link from "next/link";
-import NotesTabsWrapper from "@/components/NotesTabsWrapper";
 
 function layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +20,7 @@ function layout({ children }: { children: React.ReactNode }) {
               </Button>
             </Link>
           </div>
+          <SearchBar />
           {children}
         </div>
       </main>

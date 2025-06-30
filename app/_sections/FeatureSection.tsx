@@ -1,10 +1,18 @@
 "use client";
-
-import React from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Share2, Users, Cloud, Zap, Shield, Search, Edit3 } from "lucide-react";
+import {
+  Share2,
+  Users,
+  Cloud,
+  Zap,
+  Shield,
+  Search,
+  Edit3,
+  LayoutDashboard,
+  FileText,
+} from "lucide-react";
 
 function FeatureSection() {
   const containerVariants = {
@@ -46,11 +54,11 @@ function FeatureSection() {
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Everything You Need to{" "}
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Create & Share
+              Write & Share
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From rich text editing to secure file storage, we've got all the
+            From rich text editing to secure note sharing, we've got all the
             tools you need to organize and share your knowledge.
           </p>
         </motion.div>
@@ -71,38 +79,40 @@ function FeatureSection() {
               color: "blue",
             },
             {
-              icon: Cloud,
-              title: "Cloud Storage",
+              icon: FileText,
+              title: "README Editor",
               description:
-                "Store unlimited files securely in the cloud with automatic sync across all your devices.",
-              color: "indigo",
+                "Write and preview markdown content with a clean editor built for README files and structured documentation.",
+              color: "green",
             },
+            {
+              icon: LayoutDashboard,
+              title: "Personal Dashboard",
+              description:
+                "Manage all your notes in one place with a clean, organized dashboard that keeps everything within reach.",
+              color: "blue",
+            },
+
             {
               icon: Share2,
               title: "Easy Sharing",
               description:
-                "Share notes and files with anyone using secure links, permissions, and collaboration tools.",
+                "Share notes with anyone using secure links, permissions, and real-time collaboration tools.",
               color: "green",
             },
             {
               icon: Search,
               title: "Smart Search",
               description:
-                "Find anything instantly with our powerful search that works across all your notes and files.",
+                "Find anything instantly with our powerful search that works across all your notes and content.",
               color: "orange",
             },
-            {
-              icon: Users,
-              title: "Team Collaboration",
-              description:
-                "Work together in real-time with your team, leave comments, and track changes seamlessly.",
-              color: "pink",
-            },
+
             {
               icon: Shield,
               title: "Enterprise Security",
               description:
-                "Your data is protected with end-to-end encryption and enterprise-grade security measures.",
+                "Your notes are protected with end-to-end encryption and enterprise-grade security measures.",
               color: "purple",
             },
           ].map((feature, index) => (

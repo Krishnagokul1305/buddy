@@ -16,7 +16,7 @@ export default async function EditNotePage({
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 container py-8">
-        <div className="flex flex-col gap-8 max-w-7xl mx-auto">
+        <div className="flex flex-col gap-8 mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Link

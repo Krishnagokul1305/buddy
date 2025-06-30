@@ -111,6 +111,7 @@ export class UserService {
           username: true,
           email: true,
         },
+        take: 5,
       });
 
       return users;
