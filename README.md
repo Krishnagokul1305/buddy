@@ -132,11 +132,6 @@ NEXTAUTH_URL="http://localhost:3000"
 
 ## 👨‍💻 Author
 
-Built with 💙 by **Gokul Krishnan**
+Built by **Gokul Krishnan**
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
 \`\`\`
